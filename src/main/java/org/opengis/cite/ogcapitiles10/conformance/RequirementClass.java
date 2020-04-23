@@ -8,7 +8,7 @@ package org.opengis.cite.ogcapitiles10.conformance;
  */
 public enum RequirementClass {
 
-    CORE( "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/req/co1re" ),
+    CORE( "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/req/core" ),
 
     COMMON( "http://www.opengis.net/spec/ogcapi-common-1/1.0/req/core"),
     
