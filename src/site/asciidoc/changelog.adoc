@@ -1,4 +1,4 @@
-= Release Notes OGC API - Features
+= Release Notes OGC API - Tiles
 
 
 
