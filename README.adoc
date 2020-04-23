@@ -1,4 +1,4 @@
-= OGC API - Features  Conformance Test Suite
+= OGC API - Tiles  Conformance Test Suite
 
 == Scope
 
