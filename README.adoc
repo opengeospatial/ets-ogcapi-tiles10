@@ -1,4 +1,4 @@
-= OGC API - Tiles  Conformance Test Suite
+= DRAFT OGC API - Tiles  Conformance Test Suite
 
 == Scope
 
