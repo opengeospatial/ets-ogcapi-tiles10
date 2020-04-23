@@ -8,21 +8,13 @@ package org.opengis.cite.ogcapitiles10.conformance;
  */
 public enum RequirementClass {
 
-    CORE( "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core" ),
+    CORE( "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/req/co1re" ),
 
-    HTML( "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/html", "text/html", "text/html" ),
+    COMMON( "http://www.opengis.net/spec/ogcapi-common-1/1.0/req/core"),
+    
+    COLLECTIONS("http://www.opengis.net/spec/ogcapi-common-1/1.0/req/collections");
 
-    GEOJSON( "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson", "application/geo+json", "application/json" ),
 
-    GMLSF0( "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/gmlsf0",
-           "application/gml+xml;version=3.2;profile=http://www.opengis.net/def/profile/ogc/2.0/gml-sf0",
-           "application/xml" ),
-
-    GMLSF2( "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/gmlsf2",
-           "application/gml+xml;version=3.2;profile=http://www.opengis.net/def/profile/ogc/2.0/gml-sf2",
-           "application/xml" ),
-
-    OPENAPI30( "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30" );
 
     private final String conformanceClass;
 

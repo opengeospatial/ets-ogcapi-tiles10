@@ -16,6 +16,8 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 /**
+ * Updated at the OGC API - Tiles Sprint 2020
+ * 
  * A.2.2. Landing Page {root}/
  *
  * @author <a href="mailto:goltz@lat-lon.de">Lyn Goltz </a>
@@ -26,7 +28,7 @@ public class LandingPage extends CommonFixture {
 
     /**
      * <pre>
-     * Abstract Test 3: /ats/core/root-op
+     * Abstract Test 2: /ats/core/root-op
      * Test Purpose: Validate that a landing page can be retrieved from the expected location.
      * Requirement: /req/core/root-op
      *
@@ -36,7 +38,7 @@ public class LandingPage extends CommonFixture {
      *  3. Validate the contents of the returned document using test /ats/core/root-success.
      * </pre>
      */
-    @Test(description = "Implements A.2.2. Landing Page {root}/, Abstract Test 3 (Requirement /req/core/root-op)", groups = "landingpage")
+    @Test(description = "Implements A.2.2. of OGC 19-072: Landing Page {root}/, Abstract Test 2 (Requirement /req/core/root-op)", groups = "landingpage")
     public void landingPageRetrieval() {
         Response request = init().baseUri( rootUri.toString() ).accept( JSON ).when().request( GET, "/" );
         request.then().statusCode( 200 );
@@ -45,7 +47,7 @@ public class LandingPage extends CommonFixture {
 
     /**
      * <pre>
-     * Abstract Test 4: /ats/core/root-success Test Purpose: Validate that the landing page complies with the require
+     * Abstract Test 3: /ats/core/root-success Test Purpose: Validate that the landing page complies with the require
      * structure and contents. Requirement: /req/core/root-success
      *
      * Test Method: Validate the landing page for all supported media types using the resources and tests identified in
@@ -55,7 +57,7 @@ public class LandingPage extends CommonFixture {
      * that the landing page includes a "data" link to the Feature contents.
      * </pre>
      */
-    @Test(description = "Implements A.2.2. Landing Page {root}/, Abstract Test 4 (Requirement /req/core/root-success)", groups = "landingpage", dependsOnMethods = "landingPageRetrieval")
+    @Test(description = "Implements A.2.2. of OGC 19-072: Landing Page {root}/, Abstract Test 3 (Requirement /req/core/root-success)", groups = "landingpage", dependsOnMethods = "landingPageRetrieval")
     public void landingPageValidation() {
         List<Object> links = response.getList( "links" );
         Set<String> linkTypes = collectLinkTypes( links );
@@ -64,9 +66,27 @@ public class LandingPage extends CommonFixture {
                                             || linkTypes.contains( "service-doc" ) )
                                           && linkTypes.contains( "conformance" ) && linkTypes.contains( "data" );
         assertTrue( expectedLinkTypesExists,
-                    "The landing page must include at least links with relation type 'service-desc' or 'service-doc', 'conformance' and 'data', but contains "
+                    "The landing page must include at least links with relation type 'service-desc' or 'service-doc', 'conformance', and 'data', but contains "
                                              + String.join( ", ", linkTypes ) );
     }
+    
+    /**
+     * <pre>
+     * Requirement 12
+     * If the API has mechanism to expose root resources (e.g. a landing page), the API SHALL advertise a URI to retrieve tile definitions defined by this service as links
+     * to the descriptions paths with rel: tiles.
+     * </pre>
+     */
+    @Test(description = "Implements Requirement 12 of OGC API - Tiles: Landing Page {root}/, Requirement 12 (Requirement /req/tiles/root/root-success)", groups = "landingpage", dependsOnMethods = "landingPageRetrieval")
+    public void tilesLandingPageValidation() {
+        List<Object> links = response.getList( "links" );
+        Set<String> linkTypes = collectLinkTypes( links );
+
+        boolean expectedLinkTypesExists = linkTypes.contains( "tiles" );
+        assertTrue( expectedLinkTypesExists,
+                    "The landing page must include at least links with relation type 'tiles', but contains "
+                                             + String.join( ", ", linkTypes ) );
+    }    
 
     private Set<String> collectLinkTypes( List<Object> links ) {
         Set<String> linkTypes = new HashSet<>();

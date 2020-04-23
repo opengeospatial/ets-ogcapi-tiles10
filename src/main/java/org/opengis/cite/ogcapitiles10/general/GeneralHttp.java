@@ -16,8 +16,10 @@ import io.restassured.response.Response;
 public class GeneralHttp extends CommonFixture {
 
     /**
+     * Reviewed at the OGC API - Tiles Sprint 2020
+     * 
      * <pre>
-     * A.2.1.1. HTTP
+     * A.2.1 General HTTP
      *
      * Abstract Test 1: /ats/core/http
      * Test Purpose: Validate that the resource paths advertised through the API conform with HTTP 1.1 and, where
