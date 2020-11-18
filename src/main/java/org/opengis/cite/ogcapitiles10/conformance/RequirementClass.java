@@ -1,6 +1,7 @@
 package org.opengis.cite.ogcapitiles10.conformance;
 
 /**
+ * Updated at the OGC API - Tiles Sprint 2020 by ghobona
  *
  * Encapsulates all known requirement classes.
  *
@@ -8,11 +9,7 @@ package org.opengis.cite.ogcapitiles10.conformance;
  */
 public enum RequirementClass {
 
-    CORE( "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/req/core" ),
-
-    COMMON( "http://www.opengis.net/spec/ogcapi-common-1/1.0/req/core"),
-    
-    COLLECTIONS("http://www.opengis.net/spec/ogcapi-common-1/1.0/req/collections");
+    CORE( "http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core" );
 
 
 

@@ -40,8 +40,7 @@ public class LandingPageIT {
     public void testLandingPage() {
         LandingPage landingPage = new LandingPage();
         landingPage.initCommonFixture( testContext );
-        landingPage.landingPageRetrieval();
-        landingPage.landingPageValidation();
+        landingPage.tilesLandingPageValidation();
     }
 
 }

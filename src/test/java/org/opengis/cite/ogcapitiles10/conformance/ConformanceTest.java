@@ -4,8 +4,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.opengis.cite.ogcapitiles10.conformance.RequirementClass.CORE;
-import static org.opengis.cite.ogcapitiles10.conformance.RequirementClass.COMMON;
-import static org.opengis.cite.ogcapitiles10.conformance.RequirementClass.COLLECTIONS;
+
 
 import java.io.InputStream;
 import java.util.List;
@@ -29,7 +28,7 @@ public class ConformanceTest {
         List<RequirementClass> requirementClasses = conformanceOperationTest.parseAndValidateRequirementClasses( jsonPath );
 
         assertThat( requirementClasses.size(), is( 5 ) );
-        assertThat( requirementClasses, hasItems( CORE, COMMON, COLLECTIONS ) );
+        assertThat( requirementClasses, hasItems( CORE) );
     }
 
     @Test(expectedExceptions = AssertionError.class)
