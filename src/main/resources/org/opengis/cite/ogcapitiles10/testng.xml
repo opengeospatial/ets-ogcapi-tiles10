@@ -12,11 +12,9 @@
 
   <test name="Core">
     <packages>
-      <package name="org.opengis.cite.ogcapitiles10.general" />
       <package name="org.opengis.cite.ogcapitiles10.landingpage" />
-      <package name="org.opengis.cite.ogcapitiles10.apidefinition" />
       <package name="org.opengis.cite.ogcapitiles10.conformance" />
-      <package name="org.opengis.cite.ogcapitiles10.collections" />
+      <package name="org.opengis.cite.ogcapitiles10.tileset"/>
     </packages>
     <classes>
       <class name="org.opengis.cite.ogcapitiles10.SuitePreconditions" />

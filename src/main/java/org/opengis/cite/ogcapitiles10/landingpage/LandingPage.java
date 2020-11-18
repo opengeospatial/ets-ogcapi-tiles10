@@ -26,6 +26,25 @@ public class LandingPage extends CommonFixture {
 
     private JsonPath response;
 
+    
+    /**
+     * <pre>
+     * Abstract Test 3: /ats/core/root-op
+     * Test Purpose: Validate that a landing page can be retrieved from the expected location.
+     * Requirement: /req/core/root-op
+     *
+     * Test Method:
+     *  1. Issue an HTTP GET request to the URL {root}/
+     *  2. Validate that a document was returned with a status code 200
+     *  3. Validate the contents of the returned document using test /ats/core/root-success.
+     * </pre>
+     */
+    @Test(description = "Implements Requirement 34 of OGC API - Tiles", groups = "landingpage")
+    public void landingPageRetrieval() {
+        Response request = init().baseUri( rootUri.toString() ).accept( JSON ).when().request( GET, "/" );
+        request.then().statusCode( 200 );
+        response = request.jsonPath();
+    }    
      
     /**
      * <pre>
@@ -36,13 +55,17 @@ public class LandingPage extends CommonFixture {
      */
     @Test(description = "Implements Requirement 12 of OGC API - Tiles: Landing Page {root}/, Requirement 12 (Requirement /req/tiles/root/root-success)", groups = "landingpage")
     public void tilesLandingPageValidation() {
+   
         List<Object> links = response.getList( "links" );
+        
         Set<String> linkTypes = collectLinkTypes( links );
 
         boolean expectedLinkTypesExists = linkTypes.contains( "tiles" );
         assertTrue( expectedLinkTypesExists,
                     "The landing page must include at least links with relation type 'tiles', but contains "
                                              + String.join( ", ", linkTypes ) );
+        
+      
     }    
 
     private Set<String> collectLinkTypes( List<Object> links ) {
