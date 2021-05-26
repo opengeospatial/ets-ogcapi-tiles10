@@ -60,9 +60,9 @@ public class LandingPage extends CommonFixture {
         
         Set<String> linkTypes = collectLinkTypes( links );
 
-        boolean expectedLinkTypesExists = linkTypes.contains( "http://www.opengis.net/def/rel/ogc/1.0/tiling-schemes" );
+        boolean expectedLinkTypesExists = linkTypes.contains( "data" );
         assertTrue( expectedLinkTypesExists,
-                    "The landing page must include at least links with relation type 'tiles', but contains "
+                    "The landing page must include at least links with relation type 'data', but contains "
                                              + String.join( ", ", linkTypes ) );
         
       
