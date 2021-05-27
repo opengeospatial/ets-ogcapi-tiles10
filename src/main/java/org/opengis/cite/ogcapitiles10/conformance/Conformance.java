@@ -107,7 +107,7 @@ public class Conformance extends CommonFixture {
 
         List<RequirementClass> requirementClasses = new ArrayList<>();
         for ( Object conformTo : conformsTo ) {
-        	System.out.println("conformsTo "+conformsTo);
+        
             if ( conformTo instanceof String ) {
                 String conformanceClass = (String) conformTo;
                 RequirementClass requirementClass = RequirementClass.byConformanceClass( conformanceClass );

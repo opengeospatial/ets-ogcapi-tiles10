@@ -15,6 +15,7 @@
       <package name="org.opengis.cite.ogcapitiles10.landingpage" />
       <package name="org.opengis.cite.ogcapitiles10.conformance" />
       <package name="org.opengis.cite.ogcapitiles10.tileset"/>
+      <package name="org.opengis.cite.ogcapitiles10.tilesetslist"/>
     </packages>
     <classes>
       <class name="org.opengis.cite.ogcapitiles10.SuitePreconditions" />

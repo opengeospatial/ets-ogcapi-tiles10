@@ -39,7 +39,7 @@ public class LandingPage extends CommonFixture {
      *  3. Validate the contents of the returned document using test /ats/core/root-success.
      * </pre>
      */
-    @Test(description = "Implements Requirement 34 of OGC API - Tiles", groups = "landingpage")
+    @Test(description = "Implements Requirement TBD of OGC API - Tiles", groups = "landingpage")
     public void landingPageRetrieval() {
         Response request = init().baseUri( rootUri.toString() ).accept( JSON ).when().request( GET, "/" );
         request.then().statusCode( 200 );
@@ -53,14 +53,14 @@ public class LandingPage extends CommonFixture {
      * to the descriptions paths with rel: tiles.
      * </pre>
      */
-    @Test(description = "Implements Requirement 12 of OGC API - Tiles: Landing Page {root}/, Requirement 12 (Requirement /req/tiles/root/root-success)", groups = "landingpage")
+    @Test(description = "Implements Abstract Test 12 of OGC API - Tiles (/ats/root/root-success)", groups = "landingpage")
     public void tilesLandingPageValidation() {
    
         List<Object> links = response.getList( "links" );
         
         Set<String> linkTypes = collectLinkTypes( links );
 
-        boolean expectedLinkTypesExists = linkTypes.contains( "data" );
+        boolean expectedLinkTypesExists = linkTypes.contains( "data" ); //NOTE: set to 'data' based on discussions during Day 1 of the 2021-05 Sprint
         assertTrue( expectedLinkTypesExists,
                     "The landing page must include at least links with relation type 'data', but contains "
                                              + String.join( ", ", linkTypes ) );
