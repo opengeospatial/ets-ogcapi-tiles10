@@ -32,9 +32,6 @@ import io.restassured.response.Response;
 
 /**
  * Updated at the OSGeo Virtual Community Sprint 2020 by ghobona
- * 
- * 
- *
  *
  * @author <a href="mailto:goltz@lat-lon.de">Lyn Goltz </a>
  */
@@ -58,14 +55,14 @@ public class TileSet extends CommonFixture {
 	}
 
 	/**
-	 * Partly addresses Requirement 24 /req/tileset/tmxslink If the tiles are
-	 * available in a tile matrix set different from WebMercatorQuad, the content of
-	 * the response to a successful execution to a tileset request SHALL provide the
-	 * necessary information to formulate a tile request.
-	 * 
+	 * Partly addresses Requirement 24 /req/tileset/tmxslink If the tiles are available in
+	 * a tile matrix set different from WebMercatorQuad, the content of the response to a
+	 * successful execution to a tileset request SHALL provide the necessary information
+	 * to formulate a tile request.
 	 * @param testPoint the test point to test, never <code>null</code>
 	 */
-	@Test(description = "Implements Abstract Test 24 and Requirement 24 /req/tileset/tmxslink TileSet Path {root}/tileMatrixSets,", groups = "tileMatrixSets", dataProvider = "tilesetUris")
+	@Test(description = "Implements Abstract Test 24 and Requirement 24 /req/tileset/tmxslink TileSet Path {root}/tileMatrixSets,",
+			groups = "tileMatrixSets", dataProvider = "tilesetUris")
 	public void validateTilesetResponse(TestPoint testPoint) {
 
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/tileMatrixSets");
@@ -77,7 +74,9 @@ public class TileSet extends CommonFixture {
 		boolean providesInformationToFormulateTileRequest = false;
 		String[] knownTMS = { "WebMercatorQuad", "WorldCRS84Quad", "WorldMercatorWGS84Quad", "UTM31WGS84Quad",
 				"UPSArcticWGS84Quad", "UPSAntarcticWGS84Quad", "EuropeanETRS89_LAEAQuad", "CanadianNAD83_LCC",
-				"GNOSISGlobalGrid", "CDBGlobalGrid" };  //This will eventually be pulled in from the OGC Definitions Server
+				"GNOSISGlobalGrid", "CDBGlobalGrid" }; // This will eventually be pulled
+														// in from the OGC Definitions
+														// Server
 
 		for (Object tileMatrixSetObj : tileMatrixSets) {
 
@@ -87,7 +86,8 @@ public class TileSet extends CommonFixture {
 			for (int i = 0; i < aList.size(); i++) {
 				HashMap link = (HashMap) aList.get(i);
 
-				if (link.get("rel").toString().equals("item") && link.get("type").toString().equals("application/json")) {
+				if (link.get("rel").toString().equals("item")
+						&& link.get("type").toString().equals("application/json")) {
 
 					for (int k = 0; k < knownTMS.length; k++) {
 						if (link.get("href").toString().contains(knownTMS[k])) {
@@ -95,7 +95,7 @@ public class TileSet extends CommonFixture {
 						}
 					}
 					if (providesInformationToFormulateTileRequest == false) {
-					
+
 						providesInformationToFormulateTileRequest = checkIfTileMatrixSetIsDefined(
 								link.get("href").toString());
 					}
