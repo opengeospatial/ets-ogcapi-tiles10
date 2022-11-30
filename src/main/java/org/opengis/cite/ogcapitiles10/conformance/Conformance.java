@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.opengis.cite.ogcapitiles10.CommonFixture;
 import org.opengis.cite.ogcapitiles10.openapi3.TestPoint;
@@ -46,9 +47,13 @@ public class Conformance extends CommonFixture {
 		OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute(API_MODEL.getName());
 		URI iut = (URI) testContext.getSuite().getAttribute(IUT.getName());
 
-		TestPoint tp = new TestPoint(rootUri.toString(), "/conformance", null);
+		String serverUrl = rootUri.toString();
+		if (serverUrl.endsWith("/"))
+			serverUrl = Optional.ofNullable(serverUrl).filter(str -> str.length() != 0)
+					.map(str -> str.substring(0, str.length() - 1)).orElse(serverUrl);
+		TestPoint tp = new TestPoint(serverUrl, "/conformance", null);
 
-		List<TestPoint> testPoints = new ArrayList<TestPoint>();
+		List<TestPoint> testPoints = new ArrayList<>();
 		testPoints.add(tp);
 		Object[][] testPointsData = new Object[1][];
 		int i = 0;
@@ -75,14 +80,8 @@ public class Conformance extends CommonFixture {
 		validateConformanceOperationResponse(testPointUri, response);
 	}
 
-	/**
-	 * Requirement 1 : /req/tiles/core/conformance-success
-	 *
-	 * Abstract Test ?: /ats/core/conformance-success
-	 */
 	private void validateConformanceOperationResponse(String testPointUri, Response response) {
 		response.then().statusCode(200);
-
 		JsonPath jsonPath = response.jsonPath();
 		this.requirementClasses = parseAndValidateRequirementClasses(jsonPath);
 		assertTrue(this.requirementClasses.contains(CORE),
