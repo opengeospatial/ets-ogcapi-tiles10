@@ -67,8 +67,8 @@ public class Conformance extends CommonFixture {
 	 * Partly addresses Requirement 1 : /req/tiles/core/conformance-success
 	 * @param testPoint the test point to test, never <code>null</code>
 	 */
-	@Test(description = "Implements A.?.?. Conformance Path {root}/conformance,", groups = "conformance",
-			dataProvider = "conformanceUris")
+	@Test(description = "Implements A.1.1. Declaration of conformance classes, A.1.1.1.  Response",
+			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
 		String testPointUri = new UriBuilder(testPoint).buildUrl();
 		Response response = init().baseUri(testPointUri).accept(JSON).when().request(GET);
