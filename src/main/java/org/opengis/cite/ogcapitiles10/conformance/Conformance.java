@@ -46,16 +46,14 @@ public class Conformance extends CommonFixture {
 	public Object[][] conformanceUris(ITestContext testContext) {
 		OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute(API_MODEL.getName());
 		URI iut = (URI) testContext.getSuite().getAttribute(IUT.getName());
+		List<TestPoint> testPoints = retrieveTestPointsForConformance(apiModel, iut);
 
-		String serverUrl = rootUri.toString();
-		if (serverUrl.endsWith("/"))
-			serverUrl = Optional.ofNullable(serverUrl).filter(str -> str.length() != 0)
-					.map(str -> str.substring(0, str.length() - 1)).orElse(serverUrl);
-		TestPoint tp = new TestPoint(serverUrl, "/conformance", null);
+		// Set dummy TestPoint data if no testPoints found.
+		if (testPoints.isEmpty()) {
+			testPoints.add(new TestPoint("http://dummydata.com", "/conformance", null));
+		}
 
-		List<TestPoint> testPoints = new ArrayList<>();
-		testPoints.add(tp);
-		Object[][] testPointsData = new Object[1][];
+		Object[][] testPointsData = new Object[testPoints.size()][];
 		int i = 0;
 		for (TestPoint testPoint : testPoints) {
 			testPointsData[i++] = new Object[] { testPoint };
@@ -72,7 +70,7 @@ public class Conformance extends CommonFixture {
 	 * Partly addresses Requirement 1 : /req/tiles/core/conformance-success
 	 * @param testPoint the test point to test, never <code>null</code>
 	 */
-	@Test(description = "Implements A.1.1. Declaration of conformance classes, A.1.1.1.  Response",
+	@Test(description = "Implements A.1.1. Declaration of conformance classes, A.1.1.1. Response, Abstract test A.1, Requirement 7: /req/core/conformance-success",
 			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
 		String testPointUri = new UriBuilder(testPoint).buildUrl();
