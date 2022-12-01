@@ -297,6 +297,20 @@ public class JsonUtils {
 		return numberOfAllReturnedFeatures;
 	}
 
+	/**
+	 * Retrieves the property values as list.
+	 * @param propertyName name of the property, never <code>null</code>
+	 * @param jsonPath the json document to retrieve properties from, never
+	 * <code>null</code>
+	 * @return the property values as list, may be empty but never <code>null</code>
+	 */
+	public static List<Map<String, Object>> parseAsListOfMaps(String propertyName, JsonPath jsonPath) {
+		Object value = jsonPath.get(propertyName);
+		if (value == null)
+			return Collections.emptyList();
+		return jsonPath.getList(propertyName);
+	}
+
 	private static boolean isSameMediaType(String mediaType1, String mediaType2) {
 		if (mediaType1.contains(";") || mediaType2.contains(";")) {
 			// media types are not case sensitive
