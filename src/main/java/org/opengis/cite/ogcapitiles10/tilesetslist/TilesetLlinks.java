@@ -100,7 +100,7 @@ public class TilesetLlinks extends CommonFixture {
 
 	}
 
-	public boolean checkHasSubsetOfTheTilesetMetadata(String href) {
+	private boolean checkHasSubsetOfTheTilesetMetadata(String href) {
 		boolean hasSubsetOfTheTilesetMetadata = true; // Assume True until proven
 														// otherwise
 
@@ -113,13 +113,12 @@ public class TilesetLlinks extends CommonFixture {
 
 			if (href.startsWith("/")) {
 				String[] hrefSegments = href.split("/");
-				System.out.println("hrefSegments[1]=" + hrefSegments[1]);
-
 				String token = rootUri.toString();
-
-				newHref = (token.replace("/" + hrefSegments[1], "")) + href;
-
-				System.out.println("newURI=" + newHref);
+				newHref = token.replace("/" + hrefSegments[1], "");
+				if (newHref.endsWith("/"))
+					newHref = newHref.substring(0, newHref.length() - 1) + href;
+				else
+					newHref = newHref + href;
 			}
 
 			Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, newHref);
