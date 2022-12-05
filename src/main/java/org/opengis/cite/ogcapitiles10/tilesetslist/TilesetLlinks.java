@@ -40,13 +40,13 @@ public class TilesetLlinks extends CommonFixture {
 		}
 		return testPointsData;
 	}
-	
+
 	/**
 	 * Partly addresses Requirement 10
-	 * 
 	 * @param testPoint the test point to test<code>null</code>
 	 */
-	@Test(description = "Implements Requirement 10 (/req/tilesets-list/tileset-links)", groups = "tilesetsLists", dataProvider = "tilesetListsURIs")
+	@Test(description = "Implements Requirement 10 (/req/tilesets-list/tileset-links)", groups = "tilesetsLists",
+			dataProvider = "tilesetListsURIs")
 	public void validateTilesetsListResponse(TestPoint testPoint) {
 
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/collections");
@@ -54,112 +54,98 @@ public class TilesetLlinks extends CommonFixture {
 		JsonPath response = request.jsonPath();
 
 		List<Object> collections = response.getList("collections");
-		
+
 		StringBuffer errorMessages = new StringBuffer();
-		
-		int tilesCollectionLimit = 2;  //maximum number of collections with tiles that will be checked
-		int tilesCollectionCount = 0;		
-		
-		for(int a=0; (a<collections.size() && tilesCollectionCount < tilesCollectionLimit); a++)
-		{
-			
+
+		int tilesCollectionLimit = 2; // maximum number of collections with tiles that
+										// will be checked
+		int tilesCollectionCount = 0;
+
+		for (int a = 0; (a < collections.size() && tilesCollectionCount < tilesCollectionLimit); a++) {
+
 			HashMap collection = (HashMap) collections.get(a);
-			System.out.println("Col="+collection.get("title"));
-			
-			
+			System.out.println("Col=" + collection.get("title"));
+
 			ArrayList links = (ArrayList) collection.get("links");
 
-					
-			for(int b=0; b<links.size(); b++)
-			{
+			for (int b = 0; b < links.size(); b++) {
 				HashMap link = (HashMap) links.get(b);
-				if(link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
-					
-				
-					if(link.get("href").toString().contains("f=json"))
-					{
-						boolean hasSubsetOfTheTilesetMetadata = checkHasSubsetOfTheTilesetMetadata(link.get("href").toString());
-						
-						if(hasSubsetOfTheTilesetMetadata==false) {  //Test Requirement 10B
-							errorMessages.append("One of the tilesets in "+collection.get("title")+" did not have the minimum required subset of metadata ;");
+				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
+
+					if (link.get("href").toString().contains("f=json")) {
+						boolean hasSubsetOfTheTilesetMetadata = checkHasSubsetOfTheTilesetMetadata(
+								link.get("href").toString());
+
+						if (hasSubsetOfTheTilesetMetadata == false) { // Test Requirement
+																		// 10B
+							errorMessages.append("One of the tilesets in " + collection.get("title")
+									+ " did not have the minimum required subset of metadata ;");
 						}
-						
-						
-						tilesCollectionCount++;						
+
+						tilesCollectionCount++;
 					}
-					
-					
-					if(!link.get("href").toString().contains("/tiles")) {  //Test Requirement 10A
-						errorMessages.append("'/tiles' link relation not found in "+collection.get("title")+" ;");
+
+					if (!link.get("href").toString().contains("/tiles")) { // Test
+																			// Requirement
+																			// 10A
+						errorMessages.append("'/tiles' link relation not found in " + collection.get("title") + " ;");
 					}
 				}
-				
+
 			}
-			
+
 		}
 
+		assertTrue(errorMessages.toString().length() == 0, errorMessages.toString());
 
-		assertTrue(errorMessages.toString().length()==0,
-				errorMessages.toString());
+	}
 
-	}	
-	
-	public boolean checkHasSubsetOfTheTilesetMetadata(String href)
-	{
-		boolean hasSubsetOfTheTilesetMetadata = true; //Assume True until proven otherwise 
-		
+	public boolean checkHasSubsetOfTheTilesetMetadata(String href) {
+		boolean hasSubsetOfTheTilesetMetadata = true; // Assume True until proven
+														// otherwise
+
 		try {
-			
-		
-			
-		System.out.println("root="+rootUri.toString());
-		System.out.println("href="+href);
-		
-		String newHref = href;
-		
-		if(href.startsWith("/"))
-		{
-		  String[] hrefSegments = href.split("/"); 
-		  System.out.println("hrefSegments[1]="+hrefSegments[1]);
-		  
-		  String token = rootUri.toString();
-		  
-		  newHref = (token.replace("/"+hrefSegments[1],""))+href;
-		
-		  
-		  System.out.println("newURI="+newHref);
-		}
-		
-		
-		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, newHref);
-		request.then().statusCode(200);
-		JsonPath response = request.jsonPath();
-		
-				
-		ArrayList tilesets = (ArrayList) response.getList("tilesets");
 
-		
-		for(int b=0; b<tilesets.size(); b++)
-		{
-			HashMap tilesetMap = (HashMap) tilesets.get(b);
-			//System.out.println("title="+tilesetMap.get("title"));
-			//System.out.println("tileMatrixSetURI="+tilesetMap.get("tileMatrixSetURI"));
-			//System.out.println("tileMatrixSetDefinition="+tilesetMap.get("tileMatrixSetDefinition"));			
-			
-			if(tilesetMap.containsKey("tileMatrixSetURI")==false) {
-				hasSubsetOfTheTilesetMetadata = false;
+			System.out.println("root=" + rootUri.toString());
+			System.out.println("href=" + href);
+
+			String newHref = href;
+
+			if (href.startsWith("/")) {
+				String[] hrefSegments = href.split("/");
+				System.out.println("hrefSegments[1]=" + hrefSegments[1]);
+
+				String token = rootUri.toString();
+
+				newHref = (token.replace("/" + hrefSegments[1], "")) + href;
+
+				System.out.println("newURI=" + newHref);
 			}
-			System.out.println("hasSubsetOfTheTilesetMetadata="+hasSubsetOfTheTilesetMetadata);
+
+			Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, newHref);
+			request.then().statusCode(200);
+			JsonPath response = request.jsonPath();
+
+			ArrayList tilesets = (ArrayList) response.getList("tilesets");
+
+			for (int b = 0; b < tilesets.size(); b++) {
+				HashMap tilesetMap = (HashMap) tilesets.get(b);
+				// System.out.println("title="+tilesetMap.get("title"));
+				// System.out.println("tileMatrixSetURI="+tilesetMap.get("tileMatrixSetURI"));
+				// System.out.println("tileMatrixSetDefinition="+tilesetMap.get("tileMatrixSetDefinition"));
+
+				if (tilesetMap.containsKey("tileMatrixSetURI") == false) {
+					hasSubsetOfTheTilesetMetadata = false;
+				}
+				System.out.println("hasSubsetOfTheTilesetMetadata=" + hasSubsetOfTheTilesetMetadata);
+			}
+
 		}
-		
-		
-		}
-		catch(Exception ee)
-		{
+		catch (Exception ee) {
 			ee.printStackTrace();
 		}
-		
+
 		return hasSubsetOfTheTilesetMetadata;
 	}
-	
+
 }
