@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.opengis.cite.ogcapitiles10.CommonFixture;
 import org.opengis.cite.ogcapitiles10.openapi3.TestPoint;
@@ -45,12 +46,14 @@ public class Conformance extends CommonFixture {
 	public Object[][] conformanceUris(ITestContext testContext) {
 		OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute(API_MODEL.getName());
 		URI iut = (URI) testContext.getSuite().getAttribute(IUT.getName());
+		List<TestPoint> testPoints = retrieveTestPointsForConformance(apiModel, iut);
 
-		TestPoint tp = new TestPoint(rootUri.toString(), "/conformance", null);
+		// Set dummy TestPoint data if no testPoints found.
+		if (testPoints.isEmpty()) {
+			testPoints.add(new TestPoint("http://dummydata.com", "/conformance", null));
+		}
 
-		List<TestPoint> testPoints = new ArrayList<TestPoint>();
-		testPoints.add(tp);
-		Object[][] testPointsData = new Object[1][];
+		Object[][] testPointsData = new Object[testPoints.size()][];
 		int i = 0;
 		for (TestPoint testPoint : testPoints) {
 			testPointsData[i++] = new Object[] { testPoint };
@@ -67,22 +70,16 @@ public class Conformance extends CommonFixture {
 	 * Partly addresses Requirement 1 : /req/tiles/core/conformance-success
 	 * @param testPoint the test point to test, never <code>null</code>
 	 */
-	@Test(description = "Implements A.?.?. Conformance Path {root}/conformance,", groups = "conformance",
-			dataProvider = "conformanceUris")
+	@Test(description = "Implements A.1.1. Declaration of conformance classes, A.1.1.1. Response, Abstract test A.1, Requirement 7: /req/core/conformance-success",
+			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
 		String testPointUri = new UriBuilder(testPoint).buildUrl();
 		Response response = init().baseUri(testPointUri).accept(JSON).when().request(GET);
 		validateConformanceOperationResponse(testPointUri, response);
 	}
 
-	/**
-	 * Requirement 1 : /req/tiles/core/conformance-success
-	 *
-	 * Abstract Test ?: /ats/core/conformance-success
-	 */
 	private void validateConformanceOperationResponse(String testPointUri, Response response) {
 		response.then().statusCode(200);
-
 		JsonPath jsonPath = response.jsonPath();
 		this.requirementClasses = parseAndValidateRequirementClasses(jsonPath);
 		assertTrue(this.requirementClasses.contains(CORE),

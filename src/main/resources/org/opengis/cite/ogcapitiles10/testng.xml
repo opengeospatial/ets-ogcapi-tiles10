@@ -10,16 +10,31 @@
     <listener class-name="org.opengis.cite.ogcapitiles10.TestFailureListener" />
   </listeners>
 
+  <test name="OpenAPI Specification 3.0">
+    <packages>
+      <package name="org.opengis.cite.ogcapitiles10.apidefinition" />
+    </packages>
+  </test>
+
   <test name="Core">
     <packages>
-      <package name="org.opengis.cite.ogcapitiles10.landingpage" />
       <package name="org.opengis.cite.ogcapitiles10.conformance" />
-      <package name="org.opengis.cite.ogcapitiles10.tileset"/>
-      <package name="org.opengis.cite.ogcapitiles10.tilesetslist"/>
     </packages>
     <classes>
       <class name="org.opengis.cite.ogcapitiles10.SuitePreconditions" />
     </classes>
+  </test>
+
+  <test name="Tilesets List">
+    <packages>
+      <package name="org.opengis.cite.ogcapitiles10.tilesetslist" />
+    </packages>
+  </test>
+
+  <test name="Dataset Tilesets">
+    <packages>
+      <package name="org.opengis.cite.ogcapitiles10.landingpage" />
+    </packages>
   </test>
 
 </suite>
