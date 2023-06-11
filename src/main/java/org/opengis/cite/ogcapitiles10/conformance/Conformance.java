@@ -67,10 +67,11 @@ public class Conformance extends CommonFixture {
 	}
 
 	/**
-	 * Partly addresses Requirement 1 : /req/tiles/core/conformance-success
+	 * Implements Abstract test A.1
+	 * Partly addresses Requirement 7: /req/core/conformance-success
 	 * @param testPoint the test point to test, never <code>null</code>
 	 */
-	@Test(description = "Implements A.1.1. Declaration of conformance classes, A.1.1.1. Response, Abstract test A.1, Requirement 7: /req/core/conformance-success",
+	@Test(description = "Implements Abstract test A.1, Requirement 7: /req/core/conformance-success",
 			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
 		String testPointUri = new UriBuilder(testPoint).buildUrl();
