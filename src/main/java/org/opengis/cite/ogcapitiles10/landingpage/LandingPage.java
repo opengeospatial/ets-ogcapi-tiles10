@@ -28,47 +28,37 @@ public class LandingPage extends CommonFixture {
 
 	/**
 	 * <pre>
-	 * Abstract Test 3: /ats/core/root-op
-	 * Test Purpose: Validate that a landing page can be retrieved from the expected location.
-	 * Requirement: /req/core/root-op
-	 *
-	 * Test Method:
-	 *  1. Issue an HTTP GET request to the URL {root}/
-	 *  2. Validate that a document was returned with a status code 200
-	 *  3. Validate the contents of the returned document using test /ats/core/root-success.
+	 * Implements Abstract test A.10: /conf/dataset-tilesets/landingpage
+	 * Addresses Requirement 11: /req/dataset-tilesets/landingpage
 	 * </pre>
 	 */
-	@Test(description = "Implements Requirement TBD of OGC API - Tiles", groups = "landingpage")
+	@Test(description = "Implements Abstract test A.10, addresses Requirement 11", groups = "landingpage")
 	public void landingPageRetrieval() {
+	
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
-		response = request.jsonPath();
-	}
-
-	/**
-	 * <pre>
-	 * Requirement 12
-	 * If the API has mechanism to expose root resources (e.g. a landing page), the API SHALL advertise a URI to retrieve tile definitions defined by this service as links
-	 * to the descriptions paths with rel: tiles.
-	 * </pre>
-	 */
-	@Test(description = "Implements Abstract Test 12 of OGC API - Tiles (/ats/root/root-success)",
-			groups = "landingpage")
-	public void tilesLandingPageValidation() {
-
+		response = request.jsonPath();	
+		
 		List<Object> links = response.getList("links");
+		
+		boolean hasTilesets = false;
 
-		Set<String> linkTypes = collectLinkTypes(links);
-
-		boolean expectedLinkTypesExists = linkTypes.contains("data"); // NOTE: set to
-																		// 'data' based on
-																		// discussions
-																		// during Day 1 of
-																		// the 2021-05
-																		// Sprint
-		assertTrue(expectedLinkTypesExists,
-				"The landing page must include at least links with relation type 'data', but contains "
-						+ String.join(", ", linkTypes));
+		for (Object link : links) {
+			Map<String, Object> linkMap = (Map<String, Object>) link;
+			Object linkType = linkMap.get("rel");
+		
+			if(linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector") || 
+					linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-map") || 
+					linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage")) 
+				hasTilesets = true;			
+		}
+		assertTrue(hasTilesets,
+				"The landing page must include at least links with relation types "+
+						"http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector, " +
+						"http://www.opengis.net/def/rel/ogc/1.0/tilesets-map or "+
+						"http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage"
+				
+				);
 
 	}
 
