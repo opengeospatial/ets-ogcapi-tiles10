@@ -201,7 +201,7 @@
           <scmBranch>gh-pages</scmBranch>
         </configuration>
       </plugin>
-      <plugin>
+      <!-- plugin>
         <groupId>io.spring.javaformat</groupId>
         <artifactId>spring-javaformat-maven-plugin</artifactId>
         <version>0.0.29</version>
@@ -214,7 +214,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin-->
     </plugins>
     <pluginManagement>
       <plugins>
