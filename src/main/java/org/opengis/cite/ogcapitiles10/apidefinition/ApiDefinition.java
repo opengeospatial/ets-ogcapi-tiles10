@@ -50,11 +50,12 @@ public class ApiDefinition extends CommonFixture {
 	}
 
 	/**
+	 * Implements Abstract test A.23: /conf/oas30/completeness
 	 * Partly addresses Requirement 22: /req/oas30/completeness
 	 * @param testContext never <code>null</code>
 	 * @throws MalformedURLException if the apiUrl is malformed
 	 */
-	@Test(description = "Implements A.8.1. Web API OpenAPI definition response, Abstract test A.23, Requirement 22: /req/oas30/completeness",
+	@Test(description = "Implements Abstract test A.23, Requirement 22: /req/oas30/completeness",
 			groups = "apidefinition")
 	public void apiDefinitionValidation(ITestContext testContext) throws MalformedURLException {
 		OpenApi3Parser parser = new OpenApi3Parser();

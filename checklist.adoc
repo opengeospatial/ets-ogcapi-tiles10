@@ -1,0 +1,55 @@
+== Checklist
+
+
+[cols="1,1"]
+|===
+
+|	A.1.1.1.  Response (Abstract test A.1)	| `Conformance.validateConformanceOperationAndResponse` 
+|	A.1.2.  A tile	|
+|	A.1.2.1.  Operation (Abstract test A.2)	| `Tile.validateTilesAreAvailable`
+|	A.1.2.2.  Parameter tileMatrix (Abstract test A.3)	| `Tile.validateTileMatrixDefinitionIsAvailable`
+|	A.1.2.3.  Parameter tileRow (Abstract test A.4)	| `Tile.validateTileRowDefinitionIsAvailable`
+|	A.1.2.4.  Parameter tileCol (Abstract test A.5)	| `Tile.validateTileColDefinitionIsAvailable`
+|	A.1.2.5.  Response (Abstract test A.6)	|
+|	A.1.2.6.  Error conditions (Abstract test A.7)	|
+|	A.2.  Conformance Class “Tileset”	|
+|	A.2.1.  Tileset resource	|
+|	A.2.1.1.  Response	|
+|	A.3.  Conformance Class “Tilesets List”	|
+|	A.3.1.  Tilesets list	|
+|	A.3.1.1.  Response (Abstract test A.9)	| `TilesetLinks.validateTilesetsListResponse` P
+|	A.4.  Conformance Class “Dataset Tilesets”	|
+|	A.4.1.  Web API landing page	|
+|	A.4.1.1.  Response (Abstract test A.10)	| `LandingPage.landingPageRetrieval`
+|	A.4.2.  Dataset tilesets	|
+|	A.4.2.1.  Operation	|
+|	A.5.  Conformance Class “GeoData Tilesets”	|
+|	A.5.1.  Geospatial data resources	|
+|	A.5.2.  Geospatial data resources tilesets list	|
+|	A.5.2.1.  Tilesets path	|
+|	A.6.  Conformance Class “Collections Selection”	|
+|	A.6.1.  Operation	|
+|	A.6.1.1.  Parameter collections	|
+|	A.6.1.2.  Response	|
+|	A.7.  Conformance Class “DateTime”	|
+|	A.7.1.  datetime query parameter request and response	|
+|	A.7.2.  subset=datetime query parameter request and response	|
+|	A.8.  Conformance Class “OpenAPI Specification 3.0”	|
+|	A.8.1.  Web API OpenAPI definition response	| `ApiDefinition.apiDefinitionValidation`
+|	A.9.  Conformance Class “XML Tileset Metadata”	|
+|	A.9.1.  XML encoding	|
+|	A.10.  Conformance Classes for tile encodings	|
+|	A.10.1.  Conformance Class “PNG”	|
+|	A.10.1.1.  PNG encoding	|
+|	A.10.2.  Conformance Class “JPEG”	|
+|	A.10.2.1.  JPEG Encoding	|
+|	A.10.3.  Conformance Class “TIFF”	|
+|	A.10.3.1.  TIFF encoding	|
+|	A.10.4.  Conformance Class “NetCDF”	|
+|	A.10.4.1.  NetCDF encoding	|
+|	A.10.5.  Conformance Class “GeoJSON”	|
+|	A.10.5.1.  GeoJSON Encoding	|
+|	A.10.6.  Conformance Class “Mapbox Vector Tiles”	|
+|	A.10.6.1.  Mapbox Vector Tiles Encoding	|
+
+|===

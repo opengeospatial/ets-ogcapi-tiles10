@@ -44,21 +44,20 @@ public class Conformance extends CommonFixture {
 
 	@DataProvider(name = "conformanceUris")
 	public Object[][] conformanceUris(ITestContext testContext) {
-		OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute(API_MODEL.getName());
-		URI iut = (URI) testContext.getSuite().getAttribute(IUT.getName());
-		List<TestPoint> testPoints = retrieveTestPointsForConformance(apiModel, iut);
+	    OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute( API_MODEL.getName() );
+        URI iut = (URI) testContext.getSuite().getAttribute( IUT.getName() );
 
-		// Set dummy TestPoint data if no testPoints found.
-		if (testPoints.isEmpty()) {
-			testPoints.add(new TestPoint("http://dummydata.com", "/conformance", null));
-		}
+        TestPoint tp = new TestPoint(rootUri.toString(),"/conformance",null);
 
-		Object[][] testPointsData = new Object[testPoints.size()][];
-		int i = 0;
-		for (TestPoint testPoint : testPoints) {
-			testPointsData[i++] = new Object[] { testPoint };
-		}
-		return testPointsData;
+
+        List<TestPoint> testPoints = new ArrayList<TestPoint>();
+        testPoints.add(tp);
+        Object[][] testPointsData = new Object[1][];
+        int i = 0;
+        for ( TestPoint testPoint : testPoints ) {
+            testPointsData[i++] = new Object[] { testPoint };
+        }
+        return testPointsData;
 	}
 
 	@AfterClass
@@ -67,15 +66,20 @@ public class Conformance extends CommonFixture {
 	}
 
 	/**
-	 * Partly addresses Requirement 1 : /req/tiles/core/conformance-success
+	 * Implements Abstract test A.1
+	 * Partly addresses Requirement 7: /req/core/conformance-success
 	 * @param testPoint the test point to test, never <code>null</code>
 	 */
-	@Test(description = "Implements A.1.1. Declaration of conformance classes, A.1.1.1. Response, Abstract test A.1, Requirement 7: /req/core/conformance-success",
+	@Test(description = "Implements Abstract test A.1, Requirement 7: /req/core/conformance-success",
 			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
+		System.out.println("CHK 11");
 		String testPointUri = new UriBuilder(testPoint).buildUrl();
+		System.out.println("CHK 12");
 		Response response = init().baseUri(testPointUri).accept(JSON).when().request(GET);
+		System.out.println("CHK 13");
 		validateConformanceOperationResponse(testPointUri, response);
+		System.out.println("CHK 14");
 	}
 
 	private void validateConformanceOperationResponse(String testPointUri, Response response) {
