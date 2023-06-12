@@ -6,10 +6,10 @@
 
 |	A.1.1.1.  Response (Abstract test A.1)	| `Conformance.validateConformanceOperationAndResponse` 
 |	A.1.2.  A tile	|
-|	A.1.2.1.  Operation (Abstract test A.2)	|
-|	A.1.2.2.  Parameter tileMatrix (Abstract test A.3)	|
-|	A.1.2.3.  Parameter tileRow (Abstract test A.4)	|
-|	A.1.2.4.  Parameter tileCol (Abstract test A.5)	|
+|	A.1.2.1.  Operation (Abstract test A.2)	| `Tile.validateTilesAreAvailable`
+|	A.1.2.2.  Parameter tileMatrix (Abstract test A.3)	| `Tile.validateTileMatrixDefinitionIsAvailable`
+|	A.1.2.3.  Parameter tileRow (Abstract test A.4)	| `Tile.validateTileRowDefinitionIsAvailable`
+|	A.1.2.4.  Parameter tileCol (Abstract test A.5)	| `Tile.validateTileColDefinitionIsAvailable`
 |	A.1.2.5.  Response (Abstract test A.6)	|
 |	A.1.2.6.  Error conditions (Abstract test A.7)	|
 |	A.2.  Conformance Class “Tileset”	|
