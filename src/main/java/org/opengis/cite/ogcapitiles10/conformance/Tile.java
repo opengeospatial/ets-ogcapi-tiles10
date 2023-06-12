@@ -85,11 +85,11 @@ public class Tile extends CommonFixture {
 	
 	/**
 	 * <pre>
-	 * Implements Abstract test A.2
-	 * Addresses Requirement 1: /req/core/tc-op
+	 * Implements Abstract test A.6: /conf/core/tc-success
+	 * Addresses Requirement 5: /req/core/tc-success
 	 * </pre>
 	 */
-	@Test(description = "Implements Abstract test A.2, Requirement 1: /req/core/tc-op")
+	@Test(description = "Implements Abstract test A.6, Requirement 5: /req/core/tc-success")
 	public void validateSuccessfulTilesExecution() throws Exception {
 		
 		
@@ -293,7 +293,25 @@ public class Tile extends CommonFixture {
 		for (Object tilesetObj : tilesets) {
 			Map<String, Object> tileset = (Map<String, Object>) tilesetObj;
 			
+			String tileMatrixSetId = tileset.get("tileMatrixSetId").toString();
+			System.out.println("WW "+tileMatrixSetId);			
+			
 			ArrayList linksList = (ArrayList) tileset.get("links");
+			
+			
+			ArrayList tileMatrixSetLimitsList = (ArrayList) tileset.get("tileMatrixSetLimits");
+			
+			String tileMatrix = "";
+			String maxTileRow = "";
+			String minTileCol = "";
+			
+			for(int i=0; i<Math.min(tileMatrixSetLimitsList.size(),1); i++)
+			{
+				HashMap tileMatrixSetLimits = (HashMap) tileMatrixSetLimitsList.get(i);
+				tileMatrix = tileMatrixSetLimits.get("tileMatrix").toString();
+				maxTileRow = tileMatrixSetLimits.get("maxTileRow").toString();
+				minTileCol = tileMatrixSetLimits.get("minTileCol").toString();
+			}
 			
 			for(int i=0; i<linksList.size(); i++)
 			{
@@ -309,9 +327,18 @@ public class Tile extends CommonFixture {
 					  {
 						  if(testURL) {
 							  String newURL = links.get("href").toString().
-									  replace("{"+this.tileRowTemplateString+"}", "0").
-									  replace("{"+this.tileColTemplateString+"}", "0");
-							  System.out.println(newURL);
+									  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
+									  replace("{"+this.tileRowTemplateString+"}", maxTileRow).
+									  replace("{"+this.tileColTemplateString+"}", minTileCol);
+							  
+							  Response request1 = init().baseUri(newURL.toString()).accept("*/*").when().request(GET);
+							
+							  if(request1.getStatusCode()!=200)
+							  {
+								  
+							  }
+							  
+							  System.out.println("TT "+request1.getStatusCode()+" "+newURL+"\n");
 						  }
 						  foundTemplates = true;
 					  }
@@ -322,6 +349,8 @@ public class Tile extends CommonFixture {
 					}
 				}
 			}
+			
+
 			
 		}
 		
