@@ -61,7 +61,7 @@ public class Tile extends CommonFixture {
 		List<Object> links = response.getList("links");
 
 		
-		boolean foundTemplates = false;
+		String resultString = "";
 
 		for (Object linkObj : links) {
 			Map<String, Object> link = (Map<String, Object>) linkObj;
@@ -73,12 +73,13 @@ public class Tile extends CommonFixture {
 					
 					String jsonData = parseTilesetMetadata(link.get("href").toString());
 					
-					foundTemplates = processTilesResponse(link.get("href").toString(),false);
+					resultString = processTilesResponse(link.get("href").toString(),false,false);
 				}
 
 			}
 		
-		Assert.assertTrue(foundTemplates, "URL templates for accessing tiles could not be found");
+		System.out.println("validateTilesAreAvailable "+resultString.length());
+		Assert.assertTrue(resultString.length()==0, resultString);
 		
 
 	}
@@ -99,8 +100,7 @@ public class Tile extends CommonFixture {
 
 		List<Object> links = response.getList("links");
 
-		
-		boolean foundTemplates = false;
+		String resultString = "";
 
 		for (Object linkObj : links) {
 			Map<String, Object> link = (Map<String, Object>) linkObj;
@@ -112,12 +112,13 @@ public class Tile extends CommonFixture {
 					
 					String jsonData = parseTilesetMetadata(link.get("href").toString());
 					
-					foundTemplates = processTilesResponse(link.get("href").toString(),true);
+					resultString = processTilesResponse(link.get("href").toString(),true,false);
 				}
 
 			}
 		
-		Assert.assertTrue(foundTemplates, "URL templates for accessing tiles could not be found");
+		System.out.println("validateSuccessfulTilesExecution "+resultString.length());
+		Assert.assertTrue(resultString.length()==0, resultString);
 		
 
 	}	
@@ -280,8 +281,11 @@ public class Tile extends CommonFixture {
 		return foundTemplates;
 	}
 	
-	private boolean processTilesResponse(String urlString, boolean testURL)
+	private String processTilesResponse(String urlString, boolean testURL, boolean checkErrorResponse)
 	{
+		StringBuffer errorMessages = new StringBuffer();
+		
+		
 		boolean foundTemplates = false;
 		
 		Response request = init().baseUri(urlString).accept(JSON).when().request(GET);
@@ -326,19 +330,40 @@ public class Tile extends CommonFixture {
 							  && links.get("href").toString().contains("{"+this.tileColTemplateString+"}")) 
 					  {
 						  if(testURL) {
-							  String newURL = links.get("href").toString().
-									  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
-									  replace("{"+this.tileRowTemplateString+"}", maxTileRow).
-									  replace("{"+this.tileColTemplateString+"}", minTileCol);
+		
 							  
-							  Response request1 = init().baseUri(newURL.toString()).accept("*/*").when().request(GET);
-							
-							  if(request1.getStatusCode()!=200)
-							  {
-								  
-							  }
 							  
-							  System.out.println("TT "+request1.getStatusCode()+" "+newURL+"\n");
+							  if(checkErrorResponse==true){
+								  String newURL = links.get("href").toString().
+										  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
+										  replace("{"+this.tileRowTemplateString+"}", maxTileRow).
+										  replace("{"+this.tileColTemplateString+"}", minTileCol);								  
+								  URL urlStr = new URL(newURL);
+								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
+								   
+								  int responseCode = httpConn.getResponseCode();
+								
+								  if(responseCode!=200)
+								  {
+									  errorMessages.append("Expected status code 200 but received "+responseCode+" . ");
+								  }
+						    }
+							 else if(checkErrorResponse==false) {
+								  String newURL = links.get("href").toString().
+										  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
+										  replace("{"+this.tileRowTemplateString+"}", maxTileRow).
+										  replace("{"+this.tileColTemplateString+"}", minTileCol);
+								  URL urlStr = new URL(newURL);
+								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
+								   
+								  int responseCode = httpConn.getResponseCode();
+								
+								  if(responseCode!=200)
+								  {
+									  errorMessages.append("Expected status code 200 but received "+responseCode+" . ");
+								  }  
+							 }
+							  
 						  }
 						  foundTemplates = true;
 					  }
@@ -354,7 +379,9 @@ public class Tile extends CommonFixture {
 			
 		}
 		
-		return foundTemplates;
+		if(foundTemplates==false) errorMessages.append("No URL templates were found.");
+		
+		return errorMessages.toString();
 	}
 
 	private String parseTilesetMetadata(String urlString)
