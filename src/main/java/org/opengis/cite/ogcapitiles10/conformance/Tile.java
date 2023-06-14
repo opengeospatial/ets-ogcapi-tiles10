@@ -64,7 +64,7 @@ public class Tile extends CommonFixture {
 		List<Object> links = response.getList("links");
 
 		
-		String resultString = "";
+		String resultString = "No tiles resource was found";
 
 		for (Object linkObj : links) {
 			Map<String, Object> link = (Map<String, Object>) linkObj;
@@ -74,11 +74,16 @@ public class Tile extends CommonFixture {
 		
 				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
 					
-					
 					resultString = processTilesResponse(link.get("href").toString(),false,false);
 				}
+		
 
-			}
+		}
+		
+		if(resultString.contains("No tiles resource was found")){  // if the tilesets are not accessible from the landing page, then we check at the collections level
+			
+			resultString = processNestedTilesResponse();
+		}
 		
 		System.out.println("validateTilesAreAvailable "+resultString.length());
 		Assert.assertTrue(resultString.length()==0, resultString);
@@ -209,6 +214,82 @@ public class Tile extends CommonFixture {
 		
 
 	}
+	
+	private String processNestedTilesResponse()
+	{
+		StringBuffer errorMessages = new StringBuffer();
+		
+		Response request2 = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/collections");
+		request2.then().statusCode(200);
+		response = request2.jsonPath();
+
+		List<Object> collectionsList = response.getList("collections");
+
+		boolean foundTilesetsLink = false;
+		boolean nestedTilesAreAvailable = false;
+
+		for (Object collectionObj : collectionsList) {
+			HashMap collection = (HashMap) collectionObj;
+			
+			ArrayList collectionLinks = (ArrayList) collection.get("links");
+			
+			
+			
+			for(int q=0; q<collectionLinks.size(); q++)
+			{
+				HashMap linkItem = (HashMap) collectionLinks.get(q);
+				if(linkItem.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-") && foundTilesetsLink ==false)
+				{
+				
+					
+					String newURL = rootUri.getScheme()+"://"+rootUri.getHost()+linkItem.get("href").toString();					
+					Response tilesRequest = init().baseUri(newURL).accept(JSON).when().request(GET);
+					tilesRequest.then().statusCode(200);
+					JsonPath tilesResponse = tilesRequest.jsonPath();
+					List<Object> tilesetsList = tilesResponse.getList("tilesets");
+					for(int r=0; r < tilesetsList.size(); r++)
+					{
+						HashMap tileset = (HashMap) tilesetsList.get(r);
+						ArrayList tilesetLinksList = (ArrayList) tileset.get("links");
+						for(int p=0; p<tilesetLinksList.size(); p++)
+						{
+							HashMap tilesetLink = (HashMap) tilesetLinksList.get(p);
+							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
+							{
+								String newURL2 = rootUri.getScheme()+"://"+rootUri.getHost()+tilesetLink.get("href").toString();
+							
+								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
+								innerTilesRequest.then().statusCode(200);
+								JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
+								List<Object> innerTilesLinks = innerTilesResponse.getList("links");
+								
+								for(int x=0; x < innerTilesLinks.size(); x++)
+								{
+									HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
+									nestedTilesAreAvailable = true;
+									System.out.println("TEST "+innerTileLink.get("href").toString());
+						
+								}
+							}
+						}
+						
+					}
+					
+			      	 
+			      	foundTilesetsLink = true;		
+				}
+			}
+			
+			
+		
+		
+		} //for each collection		
+		
+		errorMessages.append(nestedTilesAreAvailable?"":"No tiles resource found in collections");
+		
+		return errorMessages.toString();
+	}	
+	
 	
 	private boolean findNestedTemplateDefinition(String definitionTemplate)
 	{
