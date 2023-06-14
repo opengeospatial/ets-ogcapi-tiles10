@@ -73,13 +73,13 @@ public class Conformance extends CommonFixture {
 	@Test(description = "Implements Abstract test A.1, Requirement 7: /req/core/conformance-success",
 			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
-		System.out.println("CHK 11");
+
 		String testPointUri = new UriBuilder(testPoint).buildUrl();
-		System.out.println("CHK 12");
+
 		Response response = init().baseUri(testPointUri).accept(JSON).when().request(GET);
-		System.out.println("CHK 13");
+
 		validateConformanceOperationResponse(testPointUri, response);
-		System.out.println("CHK 14");
+
 	}
 
 	private void validateConformanceOperationResponse(String testPointUri, Response response) {

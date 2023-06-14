@@ -10,8 +10,8 @@
 |	A.1.2.2.  Parameter tileMatrix (Abstract test A.3)	| `Tile.validateTileMatrixDefinitionIsAvailable`
 |	A.1.2.3.  Parameter tileRow (Abstract test A.4)	| `Tile.validateTileRowDefinitionIsAvailable`
 |	A.1.2.4.  Parameter tileCol (Abstract test A.5)	| `Tile.validateTileColDefinitionIsAvailable`
-|	A.1.2.5.  Response (Abstract test A.6)	|
-|	A.1.2.6.  Error conditions (Abstract test A.7)	|
+|	A.1.2.5.  Response (Abstract test A.6)	| `Tile.validateSuccessfulTilesExecution`
+|	A.1.2.6.  Error conditions (Abstract test A.7)	|  `Tile.validateTilesErrorConditions`
 |	A.2.  Conformance Class “Tileset”	|
 |	A.2.1.  Tileset resource	|
 |	A.2.1.1.  Response	|

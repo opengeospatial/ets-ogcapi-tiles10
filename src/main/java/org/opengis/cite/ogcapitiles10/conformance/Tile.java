@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opengis.cite.ogcapitiles10.CommonFixture;
+import org.opengis.cite.ogcapitiles10.openapi3.TestPoint;
+import org.opengis.cite.ogcapitiles10.openapi3.UriBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -27,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
@@ -61,7 +64,7 @@ public class Tile extends CommonFixture {
 		List<Object> links = response.getList("links");
 
 		
-		boolean foundTemplates = false;
+		String resultString = "No tiles resource was found";
 
 		for (Object linkObj : links) {
 			Map<String, Object> link = (Map<String, Object>) linkObj;
@@ -71,25 +74,30 @@ public class Tile extends CommonFixture {
 		
 				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
 					
-					String jsonData = parseTilesetMetadata(link.get("href").toString());
-					
-					foundTemplates = processTilesResponse(link.get("href").toString(),false);
+					resultString = processTilesResponse(link.get("href").toString(),false,false);
 				}
-
-			}
 		
-		Assert.assertTrue(foundTemplates, "URL templates for accessing tiles could not be found");
+
+		}
+		
+		if(resultString.contains("No tiles resource was found")){  // if the tilesets are not accessible from the landing page, then we check at the collections level
+			
+			resultString = processNestedTilesResponse();
+		}
+		
+		System.out.println("validateTilesAreAvailable "+resultString.length());
+		Assert.assertTrue(resultString.length()==0, resultString);
 		
 
 	}
 	
 	/**
 	 * <pre>
-	 * Implements Abstract test A.2
-	 * Addresses Requirement 1: /req/core/tc-op
+	 * Implements Abstract test A.6: /conf/core/tc-success
+	 * Addresses Requirement 5: /req/core/tc-success
 	 * </pre>
 	 */
-	@Test(description = "Implements Abstract test A.2, Requirement 1: /req/core/tc-op")
+	@Test(description = "Implements Abstract test A.6, Requirement 5: /req/core/tc-success")
 	public void validateSuccessfulTilesExecution() throws Exception {
 		
 		
@@ -99,8 +107,7 @@ public class Tile extends CommonFixture {
 
 		List<Object> links = response.getList("links");
 
-		
-		boolean foundTemplates = false;
+		String resultString = "";
 
 		for (Object linkObj : links) {
 			Map<String, Object> link = (Map<String, Object>) linkObj;
@@ -109,18 +116,56 @@ public class Tile extends CommonFixture {
 			ObjectMapper mapper = new ObjectMapper();
 		
 				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
+	
 					
-					String jsonData = parseTilesetMetadata(link.get("href").toString());
-					
-					foundTemplates = processTilesResponse(link.get("href").toString(),true);
+					resultString = processTilesResponse(link.get("href").toString(),true,false);
 				}
 
 			}
 		
-		Assert.assertTrue(foundTemplates, "URL templates for accessing tiles could not be found");
+		System.out.println("validateSuccessfulTilesExecution "+resultString.length());
+		Assert.assertTrue(resultString.length()==0, resultString);
 		
 
 	}	
+	
+	/**
+	 * <pre>
+	 * Implements Abstract test A.7: /conf/core/tc-error
+	 * Addresses Requirement 6: /req/core/tc-error
+	 * </pre>
+	 */
+	@Test(description = "Implements Abstract test A.7: /conf/core/tc-error, Requirement 6: /req/core/tc-error")
+	public void validateTilesErrorConditions() throws Exception {
+		
+		
+		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
+		request.then().statusCode(200);
+		response = request.jsonPath();
+
+		List<Object> links = response.getList("links");
+
+		String resultString = "";
+
+		for (Object linkObj : links) {
+			Map<String, Object> link = (Map<String, Object>) linkObj;
+			Object linkType = link.get("rel");
+			
+			ObjectMapper mapper = new ObjectMapper();
+		
+				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
+
+					
+					resultString = processTilesResponse(link.get("href").toString(),true,true);
+				}
+
+			}
+		
+		System.out.println("validateSuccessfulTilesExecution "+resultString.length());
+		Assert.assertTrue(resultString.length()==0, resultString);
+		
+
+	}		
 	
 	/**
 	 * <pre>
@@ -141,7 +186,8 @@ public class Tile extends CommonFixture {
 		
 		boolean foundTemplates = false;
 
-		for (Object linkObj : links) {
+		for (int t=0; t<links.size(); t++) {
+			Object linkObj = links.get(t);
 			Map<String, Object> link = (Map<String, Object>) linkObj;
 			Object linkType = link.get("rel");
 			
@@ -149,17 +195,175 @@ public class Tile extends CommonFixture {
 		
 				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
 					
-					String jsonData = parseTilesetMetadata(link.get("href").toString());
 					
 					foundTemplates = findTemplateDefinition(link.get("href").toString(),this.tileMatrixTemplateString);
+					
+					t = links.size(); //limit to one tile-enabled collection
 				}
 
 			}
+
+		
+		if(foundTemplates==false) {
+		
+			foundTemplates =  findNestedTemplateDefinition(tileMatrixTemplateString);
+		}
+	
 		
 		Assert.assertTrue(foundTemplates, this.tileMatrixTemplateString+" definition could not be found");
 		
 
 	}
+	
+	private String processNestedTilesResponse()
+	{
+		StringBuffer errorMessages = new StringBuffer();
+		
+		Response request2 = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/collections");
+		request2.then().statusCode(200);
+		response = request2.jsonPath();
+
+		List<Object> collectionsList = response.getList("collections");
+
+		boolean foundTilesetsLink = false;
+		boolean nestedTilesAreAvailable = false;
+
+		for (Object collectionObj : collectionsList) {
+			HashMap collection = (HashMap) collectionObj;
+			
+			ArrayList collectionLinks = (ArrayList) collection.get("links");
+			
+			
+			
+			for(int q=0; q<collectionLinks.size(); q++)
+			{
+				HashMap linkItem = (HashMap) collectionLinks.get(q);
+				if(linkItem.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-") && foundTilesetsLink ==false)
+				{
+				
+					
+					String newURL = rootUri.getScheme()+"://"+rootUri.getHost()+linkItem.get("href").toString();					
+					Response tilesRequest = init().baseUri(newURL).accept(JSON).when().request(GET);
+					tilesRequest.then().statusCode(200);
+					JsonPath tilesResponse = tilesRequest.jsonPath();
+					List<Object> tilesetsList = tilesResponse.getList("tilesets");
+					for(int r=0; r < tilesetsList.size(); r++)
+					{
+						HashMap tileset = (HashMap) tilesetsList.get(r);
+						ArrayList tilesetLinksList = (ArrayList) tileset.get("links");
+						for(int p=0; p<tilesetLinksList.size(); p++)
+						{
+							HashMap tilesetLink = (HashMap) tilesetLinksList.get(p);
+							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
+							{
+								String newURL2 = rootUri.getScheme()+"://"+rootUri.getHost()+tilesetLink.get("href").toString();
+							
+								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
+								innerTilesRequest.then().statusCode(200);
+								JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
+								List<Object> innerTilesLinks = innerTilesResponse.getList("links");
+								
+								for(int x=0; x < innerTilesLinks.size(); x++)
+								{
+									HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
+									nestedTilesAreAvailable = true;
+									System.out.println("TEST "+innerTileLink.get("href").toString());
+						
+								}
+							}
+						}
+						
+					}
+					
+			      	 
+			      	foundTilesetsLink = true;		
+				}
+			}
+			
+			
+		
+		
+		} //for each collection		
+		
+		errorMessages.append(nestedTilesAreAvailable?"":"No tiles resource found in collections");
+		
+		return errorMessages.toString();
+	}	
+	
+	
+	private boolean findNestedTemplateDefinition(String definitionTemplate)
+	{
+		boolean foundTemplates = false;
+		
+		Response request2 = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/collections");
+		request2.then().statusCode(200);
+		response = request2.jsonPath();
+
+		List<Object> collectionsList = response.getList("collections");
+
+		boolean foundTilesetsLink = false;
+
+		for (Object collectionObj : collectionsList) {
+			HashMap collection = (HashMap) collectionObj;
+			
+			ArrayList collectionLinks = (ArrayList) collection.get("links");
+			
+			
+			
+			for(int q=0; q<collectionLinks.size(); q++)
+			{
+				HashMap linkItem = (HashMap) collectionLinks.get(q);
+				if(linkItem.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-") && foundTilesetsLink ==false)
+				{
+				
+					
+					String newURL = rootUri.getScheme()+"://"+rootUri.getHost()+linkItem.get("href").toString();					
+					Response tilesRequest = init().baseUri(newURL).accept(JSON).when().request(GET);
+					tilesRequest.then().statusCode(200);
+					JsonPath tilesResponse = tilesRequest.jsonPath();
+					List<Object> tilesetsList = tilesResponse.getList("tilesets");
+					for(int r=0; r < tilesetsList.size(); r++)
+					{
+						HashMap tileset = (HashMap) tilesetsList.get(r);
+						ArrayList tilesetLinksList = (ArrayList) tileset.get("links");
+						for(int p=0; p<tilesetLinksList.size(); p++)
+						{
+							HashMap tilesetLink = (HashMap) tilesetLinksList.get(p);
+							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
+							{
+								String newURL2 = rootUri.getScheme()+"://"+rootUri.getHost()+tilesetLink.get("href").toString();
+							
+								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
+								innerTilesRequest.then().statusCode(200);
+								JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
+								List<Object> innerTilesLinks = innerTilesResponse.getList("links");
+								
+								for(int x=0; x < innerTilesLinks.size(); x++)
+								{
+									HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
+									if(innerTileLink.get("href").toString().contains("{"+definitionTemplate+"}"))
+									{
+										  foundTemplates = true;
+									}
+						
+								}
+							}
+						}
+						
+					}
+					
+			      	 
+			      	foundTilesetsLink = true;		
+				}
+			}
+			
+			
+		
+		
+		} //for each collection		
+		return foundTemplates;
+	}	
+
 	
 	
 	/**
@@ -171,7 +375,6 @@ public class Tile extends CommonFixture {
 	@Test(description = "Implements Abstract test A.4, Requirement 3: /req/core/tc-tilerow-definition")
 	public void validateTileRowDefinitionIsAvailable() throws Exception {
 		
-		
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
 		response = request.jsonPath();
@@ -181,7 +384,8 @@ public class Tile extends CommonFixture {
 		
 		boolean foundTemplates = false;
 
-		for (Object linkObj : links) {
+		for (int t=0; t<links.size(); t++) {
+			Object linkObj = links.get(t);
 			Map<String, Object> link = (Map<String, Object>) linkObj;
 			Object linkType = link.get("rel");
 			
@@ -189,12 +393,23 @@ public class Tile extends CommonFixture {
 		
 				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
 					
-					String jsonData = parseTilesetMetadata(link.get("href").toString());
 					
 					foundTemplates = findTemplateDefinition(link.get("href").toString(),this.tileRowTemplateString);
+					
+					t = links.size(); //limit to one tile-enabled collection
 				}
 
 			}
+		
+		//========================	
+		
+		if(foundTemplates==false) {
+		
+			foundTemplates =  findNestedTemplateDefinition(tileRowTemplateString);
+		}
+		
+		
+		//========================
 		
 		Assert.assertTrue(foundTemplates, this.tileRowTemplateString+" definition could not be found");
 		
@@ -210,7 +425,6 @@ public class Tile extends CommonFixture {
 	@Test(description = "Implements Abstract test A.5, Requirement 4: /req/core/tc-tilecol-definition")
 	public void validateTileColDefinitionIsAvailable() throws Exception {
 		
-		
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
 		response = request.jsonPath();
@@ -220,7 +434,8 @@ public class Tile extends CommonFixture {
 		
 		boolean foundTemplates = false;
 
-		for (Object linkObj : links) {
+		for (int t=0; t<links.size(); t++) {
+			Object linkObj = links.get(t);
 			Map<String, Object> link = (Map<String, Object>) linkObj;
 			Object linkType = link.get("rel");
 			
@@ -228,12 +443,23 @@ public class Tile extends CommonFixture {
 		
 				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
 					
-					String jsonData = parseTilesetMetadata(link.get("href").toString());
 					
 					foundTemplates = findTemplateDefinition(link.get("href").toString(),this.tileColTemplateString);
+					
+					t = links.size(); //limit to one tile-enabled collection
 				}
 
 			}
+		
+		//========================	
+		
+		if(foundTemplates==false) {
+		
+			foundTemplates =  findNestedTemplateDefinition(tileColTemplateString);
+		}
+		
+		
+		//========================
 		
 		Assert.assertTrue(foundTemplates, this.tileColTemplateString+" definition could not be found");
 		
@@ -260,8 +486,7 @@ public class Tile extends CommonFixture {
 				
 				HashMap links = (HashMap) linksList.get(i);
 				
-				if(links.get("rel").equals("item"))
-				{
+		
 					try {
 					  if(links.get("href").toString().contains("{"+definitionTemplate+"}"))
 					  {
@@ -272,7 +497,7 @@ public class Tile extends CommonFixture {
 					{
 						ee.printStackTrace();
 					}
-				}
+				
 			}
 			
 		}
@@ -280,8 +505,11 @@ public class Tile extends CommonFixture {
 		return foundTemplates;
 	}
 	
-	private boolean processTilesResponse(String urlString, boolean testURL)
+	private String processTilesResponse(String urlString, boolean testURL, boolean checkErrorResponse)
 	{
+		StringBuffer errorMessages = new StringBuffer();
+		
+		
 		boolean foundTemplates = false;
 		
 		Response request = init().baseUri(urlString).accept(JSON).when().request(GET);
@@ -293,25 +521,71 @@ public class Tile extends CommonFixture {
 		for (Object tilesetObj : tilesets) {
 			Map<String, Object> tileset = (Map<String, Object>) tilesetObj;
 			
+			String tileMatrixSetId = tileset.get("tileMatrixSetId").toString();
+			System.out.println("WW "+tileMatrixSetId);			
+			
 			ArrayList linksList = (ArrayList) tileset.get("links");
+			
+			
+			ArrayList tileMatrixSetLimitsList = (ArrayList) tileset.get("tileMatrixSetLimits");
+			
+			String tileMatrix = "";
+			String maxTileRow = "";
+			String minTileCol = "";
+			
+			for(int i=0; i<Math.min(tileMatrixSetLimitsList.size(),1); i++)
+			{
+				HashMap tileMatrixSetLimits = (HashMap) tileMatrixSetLimitsList.get(i);
+				tileMatrix = tileMatrixSetLimits.get("tileMatrix").toString();
+				maxTileRow = tileMatrixSetLimits.get("maxTileRow").toString();
+				minTileCol = tileMatrixSetLimits.get("minTileCol").toString();
+			}
 			
 			for(int i=0; i<linksList.size(); i++)
 			{
 				
 				HashMap links = (HashMap) linksList.get(i);
 				
-				if(links.get("rel").equals("item"))
-				{
+				
 					try {
 					  if(links.get("href").toString().contains("{"+this.tileMatrixTemplateString+"}") 
 							  && links.get("href").toString().contains("{"+this.tileRowTemplateString+"}") 
 							  && links.get("href").toString().contains("{"+this.tileColTemplateString+"}")) 
 					  {
 						  if(testURL) {
-							  String newURL = links.get("href").toString().
-									  replace("{"+this.tileRowTemplateString+"}", "0").
-									  replace("{"+this.tileColTemplateString+"}", "0");
-							  System.out.println(newURL);
+		
+							  if(checkErrorResponse==false){
+								  String newURL = links.get("href").toString().
+										  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
+										  replace("{"+this.tileRowTemplateString+"}", maxTileRow).
+										  replace("{"+this.tileColTemplateString+"}", minTileCol);								  
+								  URL urlStr = new URL(newURL);
+								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
+								   
+								  int responseCode = httpConn.getResponseCode();
+								
+								  if(responseCode!=200)
+								  {
+									  errorMessages.append("Expected status code 200 but received "+responseCode+" . ");
+								  }
+						    }
+							 else if(checkErrorResponse==true) {
+								  String newURL = links.get("href").toString().
+										  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
+										  replace("{"+this.tileRowTemplateString+"}", ""+(Integer.parseInt(maxTileRow)+1)).
+										  replace("{"+this.tileColTemplateString+"}", minTileCol);
+								  URL urlStr = new URL(newURL);
+								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
+								   
+								  int responseCode = httpConn.getResponseCode();
+								
+								  if(responseCode!=404 && responseCode!=400)
+								  {
+									  errorMessages.append("Expected status code 404 or 400 but received "+responseCode+" . ");
+								  }  
+								
+							 }
+							  
 						  }
 						  foundTemplates = true;
 					  }
@@ -320,12 +594,16 @@ public class Tile extends CommonFixture {
 					{
 						ee.printStackTrace();
 					}
-				}
+				
 			}
+			
+
 			
 		}
 		
-		return foundTemplates;
+		if(foundTemplates==false) errorMessages.append("No URL templates were found.");
+		
+		return errorMessages.toString();
 	}
 
 	private String parseTilesetMetadata(String urlString)
