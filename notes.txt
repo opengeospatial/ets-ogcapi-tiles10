@@ -3,3 +3,5 @@ https://demo.ldproxy.net/daraa
 https://maps.gnosis.earth/ogcapi
 
 https://emotional.byteroad.net/collections/hex350_grid_cardio_1920/tiles?f=json
+
+https://demo.pygeoapi.io/master/collections/lakes
