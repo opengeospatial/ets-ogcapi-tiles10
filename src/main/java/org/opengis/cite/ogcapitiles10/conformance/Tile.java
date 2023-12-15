@@ -56,37 +56,42 @@ public class Tile extends CommonFixture {
 	@Test(description = "Implements Abstract test A.2, Requirement 1: /req/core/tc-op")
 	public void validateTilesAreAvailable() throws Exception {
 		
-		
+	
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
-		request.then().statusCode(200);
-		response = request.jsonPath();
 
+		request.then().statusCode(200);
+	
+		response = request.jsonPath();
+	
 		List<Object> links = response.getList("links");
 
 		
 		String resultString = "No tiles resource was found";
 
 		for (Object linkObj : links) {
+	
 			Map<String, Object> link = (Map<String, Object>) linkObj;
 			Object linkType = link.get("rel");
-			
+	
 			ObjectMapper mapper = new ObjectMapper();
 		
 				if (link.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-")) {
-					
+				
 					resultString = processTilesResponse(link.get("href").toString(),false,false);
+				
 				}
 		
 
 		}
 		
 		if(resultString.contains("No tiles resource was found")){  // if the tilesets are not accessible from the landing page, then we check at the collections level
-			
+			System.out.println("CHK-A");
 			resultString = processNestedTilesResponse();
 		}
-		
+		System.out.println("CHK-B");
 		System.out.println("validateTilesAreAvailable "+resultString.length());
 		Assert.assertTrue(resultString.length()==0, resultString);
+	
 		
 
 	}
@@ -215,6 +220,18 @@ public class Tile extends CommonFixture {
 
 	}
 	
+	private String formatLinkURI(String scheme, String host, String hrefLink)
+	{
+		String newURL = "";
+		if(hrefLink.contains(scheme+"://"+host)) {
+			  newURL = hrefLink;
+			}
+			else {
+			  newURL = scheme+"://"+host+hrefLink;
+			}
+		return newURL;
+	}
+	
 	private String processNestedTilesResponse()
 	{
 		StringBuffer errorMessages = new StringBuffer();
@@ -237,12 +254,17 @@ public class Tile extends CommonFixture {
 			
 			for(int q=0; q<collectionLinks.size(); q++)
 			{
+				
 				HashMap linkItem = (HashMap) collectionLinks.get(q);
 				if(linkItem.get("rel").toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-") && foundTilesetsLink ==false)
 				{
 				
 					
-					String newURL = rootUri.getScheme()+"://"+rootUri.getHost()+linkItem.get("href").toString();					
+					
+					String newURL = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),linkItem.get("href").toString()); 
+					
+					
+					
 					Response tilesRequest = init().baseUri(newURL).accept(JSON).when().request(GET);
 					tilesRequest.then().statusCode(200);
 					JsonPath tilesResponse = tilesRequest.jsonPath();
@@ -256,8 +278,10 @@ public class Tile extends CommonFixture {
 							HashMap tilesetLink = (HashMap) tilesetLinksList.get(p);
 							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
 							{
-								String newURL2 = rootUri.getScheme()+"://"+rootUri.getHost()+tilesetLink.get("href").toString();
+								String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString());
 							
+								System.out.println("CHK1 "+newURL2);
+								
 								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
 								innerTilesRequest.then().statusCode(200);
 								JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
@@ -317,7 +341,9 @@ public class Tile extends CommonFixture {
 				{
 				
 					
-					String newURL = rootUri.getScheme()+"://"+rootUri.getHost()+linkItem.get("href").toString();					
+					String newURL = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),linkItem.get("href").toString()); 	
+					System.out.println("CHK2 "+newURL);
+					
 					Response tilesRequest = init().baseUri(newURL).accept(JSON).when().request(GET);
 					tilesRequest.then().statusCode(200);
 					JsonPath tilesResponse = tilesRequest.jsonPath();
@@ -331,8 +357,9 @@ public class Tile extends CommonFixture {
 							HashMap tilesetLink = (HashMap) tilesetLinksList.get(p);
 							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
 							{
-								String newURL2 = rootUri.getScheme()+"://"+rootUri.getHost()+tilesetLink.get("href").toString();
-							
+								String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString()); 
+								System.out.println("CHK3 "+newURL2);
+								
 								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
 								innerTilesRequest.then().statusCode(200);
 								JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
@@ -558,7 +585,10 @@ public class Tile extends CommonFixture {
 								  String newURL = links.get("href").toString().
 										  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
 										  replace("{"+this.tileRowTemplateString+"}", maxTileRow).
-										  replace("{"+this.tileColTemplateString+"}", minTileCol);								  
+										  replace("{"+this.tileColTemplateString+"}", minTileCol);		
+								  
+								  System.out.println("CHK4 "+newURL);
+								  
 								  URL urlStr = new URL(newURL);
 								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
 								   
@@ -574,6 +604,9 @@ public class Tile extends CommonFixture {
 										  replace("{"+this.tileMatrixTemplateString+"}", tileMatrix).
 										  replace("{"+this.tileRowTemplateString+"}", ""+(Integer.parseInt(maxTileRow)+1)).
 										  replace("{"+this.tileColTemplateString+"}", minTileCol);
+								  
+								  System.out.println("CHK5 "+newURL);
+								  
 								  URL urlStr = new URL(newURL);
 								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
 								   
