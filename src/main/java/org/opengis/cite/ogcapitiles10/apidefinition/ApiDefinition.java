@@ -7,6 +7,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.opengis.cite.ogcapitiles10.CommonFixture;
 import org.testng.ITestContext;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -30,23 +31,40 @@ public class ApiDefinition extends CommonFixture {
 
 	private String response;
 
-	private String apiUrl;
+	private String apiUrl = null;
 
 	@BeforeClass(dependsOnMethods = "initCommonFixture")
 	public void retrieveApiUrl() {
-		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET);
-		JsonPath jsonPath = request.jsonPath();
+		
 
-		this.apiUrl = parseApiUrl(jsonPath);
+		if(rootUri!=null)
+		{
+		
+			Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET);
+			JsonPath jsonPath = request.jsonPath();
+	
+			this.apiUrl = parseApiUrl(jsonPath);
+			
+		}
+
 	}
 
 	@BeforeClass(dependsOnMethods = "retrieveApiUrl")
 	public void openapiDocumentRetrieval() {
-		if (apiUrl == null || apiUrl.isEmpty())
-			throw new AssertionError("Path to the API Definition could not be constructed from the landing page");
-		Response request = init().baseUri(apiUrl).accept(OPEN_API_MIME_TYPE).when().request(GET);
-		request.then().statusCode(200);
-		response = request.asString();
+		
+	
+		
+		if (apiUrl != null)
+		{		
+		
+			Response request = init().baseUri(apiUrl).accept(OPEN_API_MIME_TYPE).when().request(GET);
+		
+			request.then().statusCode(200);
+		
+			response = request.asString();
+		}
+		
+	
 	}
 
 	/**
@@ -58,12 +76,22 @@ public class ApiDefinition extends CommonFixture {
 	@Test(description = "Implements Abstract test A.23, Requirement 22: /req/oas30/completeness",
 			groups = "apidefinition")
 	public void apiDefinitionValidation(ITestContext testContext) throws MalformedURLException {
+		
+		
+		
 		OpenApi3Parser parser = new OpenApi3Parser();
 
+		if(apiUrl == null || apiUrl.isEmpty())
+		{
+			throw new SkipException(missing_api_definition_error_message);
+		}
+		
 		OpenApi3 apiModel = parser.parse(response, new URL(apiUrl), true);
 		assertTrue(apiModel.isValid(), createValidationMsg(apiModel));
 
 		testContext.getSuite().setAttribute(API_MODEL.getName(), apiModel);
+		
+		
 	}
 
 	private String parseApiUrl(JsonPath jsonPath) {

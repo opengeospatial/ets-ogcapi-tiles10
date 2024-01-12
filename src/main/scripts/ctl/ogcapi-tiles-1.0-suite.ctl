@@ -46,13 +46,88 @@
 			                 background-color:#F0F8FF; border-style: solid;
                        border-width: medium; padding:4px">Implementation under test
             </legend>
+
+			<p>
+			 The following is a quote from Conformance Class "Core" in Annex A.1 of OGC API - Tiles - Part 1: Core v1.0. "In practice, to test for conformance to the Core conformance class, the user of the test should provide a TileMatrixSet definition, a URL template (that contains the endpoint for tiles) with specific variable names, and a range of valid values for those variables and building the URLs. Once the information has been provided, the user can then execute the test."
+			</p>
+			
+			<p> 
+			 <h3 style="margin-bottom: 0.5em">Inputs for testing compliance to Conformance Class "Core"</h3>			 
+			</p>
+			<p>All of the following inputs are mandatory for testing compliance to Conformance Class "Core". </p>
+            
+            <p>
+              <label for="tilematrixsetdefinitionuri">
+                <h4 style="margin-bottom: 0.5em">Tile Matrix Set Definition URI</h4>
+                The URI of a registered tile matrix set definition that is supported by the API (e.g. http://www.opengis.net/def/tilematrixset/OGC/1.0/WebMercatorQuad)
+              </label>
+              <input id="tilematrixsetdefinitionuri" name="tilematrixsetdefinitionuri" size="128" type="text"
+                     value="" />
+            </p>
+            
+            <p>
+              <label for="urltemplatefortiles">
+                <h4 style="margin-bottom: 0.5em">URL template (that contains the endpoint for tiles) with specific variable names tileMatrix, tileRow and tileCol</h4>
+              </label>
+              <input id="urltemplatefortiles" name="urltemplatefortiles" size="128" type="text"
+                     value="" />
+            </p> 
+  
+            
+            <p>
+              <label for="tilematrix">
+                <h4 style="margin-bottom: 0.5em">A valid tileMatrix numerical identifier (e.g. 0)</h4>
+              </label>
+              <input id="tilematrix" name="tilematrix" size="128" type="text"
+                     value="" />
+            </p>
+            
+            <p>
+              <label for="mintilerow">
+                <h4 style="margin-bottom: 0.5em">The minimum tile row number (minTileRow) for the tile matrix (e.g. 0)</h4>
+              </label>
+              <input id="mintilerow" name="mintilerow" size="128" type="text"
+                     value="" />
+            </p>
+            
+            <p>
+              <label for="maxtilerow">
+                <h4 style="margin-bottom: 0.5em">The maximum tile row number (maxTileRow) for the tile matrix (e.g. 1)</h4>
+              </label>
+              <input id="maxtilerow" name="maxtilerow" size="128" type="text"
+                     value="" />
+            </p>            
+            
+            <p>
+              <label for="mintilecol">
+                <h4 style="margin-bottom: 0.5em">The minimum tile column number (minTileCol) for the tile matrix (e.g. 0)</h4>
+              </label>
+              <input id="mintilecol" name="mintilecol" size="128" type="text"
+                     value="" />
+            </p>
+            
+            <p>
+              <label for="maxtilecol">
+                <h4 style="margin-bottom: 0.5em">The maximum tile column number (maxTileCol) for the tile matrix (e.g. 1)</h4>
+              </label>
+              <input id="maxtilecol" name="maxtilecol" size="128" type="text"
+                     value="" />
+            </p>            
+            
+            <p> 
+			 <h3 style="margin-bottom: 0.5em">Inputs for testing compliance to other conformance classes</h3>
+			</p>                         
+            
+            <p>If the API offers a Conformance Class declaration document and a Landing Page, then provide the URL of the Landing Page below.</p>
+            
             <p>
               <label for="ogc-api-tiles-uri">
-                <h4 style="margin-bottom: 0.5em">Location of the landing page</h4>
+                <h4 style="margin-bottom: 0.5em">Location of the Landing Page</h4>
               </label>
               <input id="ogc-api-tiles-uri" name="ogc-api-tiles-uri" size="128" type="text"
                      value="" />
-            </p>
+            </p>            
+            
           </fieldset>
           <p>
             <input class="form-button" type="submit" value="Start" />
@@ -66,6 +141,13 @@
           <entry key="iut">
             <xsl:value-of select="normalize-space($form-data/values/value[@key='ogc-api-tiles-uri'])" />
           </entry>
+		  <entry key="tilematrixsetdefinitionuri"><xsl:value-of select="$form-data/values/value[@key='tilematrixsetdefinitionuri']"/></entry>
+		  <entry key="urltemplatefortiles"><xsl:value-of select="$form-data/values/value[@key='urltemplatefortiles']"/></entry>
+		  <entry key="tilematrix"><xsl:value-of select="$form-data/values/value[@key='tilematrix']"/></entry>
+		  <entry key="mintilerow"><xsl:value-of select="$form-data/values/value[@key='mintilerow']"/></entry>
+		  <entry key="maxtilerow"><xsl:value-of select="$form-data/values/value[@key='maxtilerow']"/></entry>
+		  <entry key="mintilecol"><xsl:value-of select="$form-data/values/value[@key='mintilecol']"/></entry>
+		  <entry key="maxtilecol"><xsl:value-of select="$form-data/values/value[@key='maxtilecol']"/></entry>          
         </properties>
       </xsl:variable>
       <xsl:variable name="testRunDir">

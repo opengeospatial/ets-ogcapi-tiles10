@@ -15,6 +15,7 @@ import java.util.Map;
 import org.opengis.cite.ogcapitiles10.CommonFixture;
 import org.opengis.cite.ogcapitiles10.openapi3.TestPoint;
 import org.testng.ITestContext;
+import org.testng.SkipException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -53,6 +54,11 @@ public class TilesetLlinks extends CommonFixture {
 			dataProvider = "tilesetListsURIs")
 	public void validateTilesetsListResponse(TestPoint testPoint) {
 
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}
+		
 		StringBuffer errorMessagesRoot = new StringBuffer();
 		StringBuffer errorMessagesCollection = new StringBuffer();
 		

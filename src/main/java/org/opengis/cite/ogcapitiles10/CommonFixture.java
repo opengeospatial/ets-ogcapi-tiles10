@@ -30,6 +30,10 @@ public class CommonFixture {
 	protected ResponseLoggingFilter responseLoggingFilter;
 
 	protected URI rootUri;
+	
+	protected final String missing_landing_page_error_message = "Skipped because a Landing Page was not provided";
+	
+	protected final String missing_api_definition_error_message = "Skipped because the API definition could not be retrieved";
 
 	/**
 	 * Initializes the common test fixture with a client component for interacting with
@@ -40,7 +44,9 @@ public class CommonFixture {
 	@BeforeClass
 	public void initCommonFixture(ITestContext testContext) {
 		initLogging();
-		rootUri = (URI) testContext.getSuite().getAttribute(SuiteAttribute.IUT.getName());
+		
+		 rootUri = (URI) testContext.getSuite().getAttribute(SuiteAttribute.IUT.getName());
+	  
 	}
 
 	@BeforeMethod

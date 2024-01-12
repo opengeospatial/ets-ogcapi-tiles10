@@ -158,10 +158,10 @@ public class TestNGController implements TestSuiteController {
 			Element entry = (Element) entries.item(i);
 			args.put(entry.getAttribute("key"), entry.getTextContent());
 		}
-		if (!args.containsKey(TestRunArg.IUT.toString())) {
+		/*if (!args.containsKey(TestRunArg.IUT.toString())) {
 			throw new IllegalArgumentException(
 					String.format("Missing argument: '%s' must be present.", TestRunArg.IUT));
-		}
+		}*/
 	}
 
 }
