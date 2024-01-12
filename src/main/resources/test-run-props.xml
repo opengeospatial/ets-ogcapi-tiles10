@@ -2,6 +2,12 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties version="1.0">
     <comment>Sample test run arguments</comment>
-    <entry key="iut">http://localhost</entry>
-    <entry key="noofcollections">3</entry>
+    <entry key="iut">https://example.org/vineyards</entry>
+    <entry key="tilematrixsetdefinitionuri">http://www.opengis.net/def/tilematrixset/OGC/1.0/WebMercatorQuad</entry>
+    <entry key="urltemplatefortiles">https://example.org/vineyards/tiles/WebMercatorQuad/{tileMatrix}/{tileRow}/{tileCol}?f=mvt</entry>
+	<entry key="tilematrix">1</entry>
+	<entry key="mintilerow">0</entry>
+	<entry key="maxtilerow">1</entry>
+	<entry key="mintilecol">0</entry>
+	<entry key="maxtilecol">1</entry>     
 </properties>

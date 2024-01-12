@@ -21,6 +21,7 @@ import org.opengis.cite.ogcapitiles10.CommonFixture;
 import org.opengis.cite.ogcapitiles10.openapi3.TestPoint;
 import org.opengis.cite.ogcapitiles10.openapi3.UriBuilder;
 import org.testng.ITestContext;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,10 +41,17 @@ import io.restassured.response.Response;
  */
 public class Conformance extends CommonFixture {
 
+	
 	private List<RequirementClass> requirementClasses;
 
 	@DataProvider(name = "conformanceUris")
 	public Object[][] conformanceUris(ITestContext testContext) {
+		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}
+		
 	    OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute( API_MODEL.getName() );
         URI iut = (URI) testContext.getSuite().getAttribute( IUT.getName() );
 
@@ -73,6 +81,11 @@ public class Conformance extends CommonFixture {
 	@Test(description = "Implements Abstract test A.1, Requirement 7: /req/core/conformance-success",
 			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
+		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}
 
 		String testPointUri = new UriBuilder(testPoint).buildUrl();
 

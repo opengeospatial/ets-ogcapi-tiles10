@@ -2,7 +2,14 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="ogcapi-tiles-1.0-${version}" verbose="0" configfailurepolicy="continue">
   <parameter name="iut" value="" />
-  <parameter name="ics" value="" />
+  <parameter name="tilematrixsetdefinitionuri" value="" />
+  <parameter name="urltemplatefortiles" value="" />
+  <parameter name="tilematrix" value="" />
+  <parameter name="mintilerow" value="" />
+  <parameter name="maxtilerow" value="" />
+  <parameter name="mintilecol" value="" />
+  <parameter name="maxtilecol" value="" />
+
 
   <listeners>
     <listener class-name="org.opengis.cite.ogcapitiles10.TestRunListener" />
@@ -13,11 +20,20 @@
 
   <test name="Core">
     <packages>
-      <package name="org.opengis.cite.ogcapitiles10.conformance" />
+      <package name="org.opengis.cite.ogcapitiles10.core" />
     </packages>
+  </test>
+  
+  <test name="Preconditions">
     <classes>
       <class name="org.opengis.cite.ogcapitiles10.SuitePreconditions" />
     </classes>
+  </test>  
+
+  <test name="Conditional Core">
+    <packages>
+      <package name="org.opengis.cite.ogcapitiles10.conformance" />
+    </packages>
   </test>
 
   <test name="OpenAPI Specification 3.0">

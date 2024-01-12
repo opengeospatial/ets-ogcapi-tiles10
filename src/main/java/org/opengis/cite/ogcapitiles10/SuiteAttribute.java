@@ -54,7 +54,51 @@ public enum SuiteAttribute {
 	 * Collection names assigned to a feature id parsed from resource
 	 * /collections/{name}/items; Added during execution.
 	 */
-	FEATUREIDS("featureIds", Map.class);
+	FEATUREIDS("featureIds", Map.class),
+	
+	/**
+	 * The URL Template For Tiles.
+	 */
+	URL_TEMPLATE_FOR_TILES("urlTemplateForTiles", String.class),	
+	
+	
+	
+	/**
+	 * The range Of Valid Values
+	 */
+	RANGE_OF_VALID_VALUES("rangeOfValidValues", String.class),
+	
+	//,,maxTileRow,minTileCol,maxTileCol
+	
+	/**
+	 * Tile Matrix
+	 */
+	TILE_MATRIX("tileMatrix", String.class),
+	
+	/**
+	 * Minimum Tile Row
+	 */
+	MINIMUM_TILE_ROW("minTileRow", String.class),
+	
+	/**
+	 * Maximum Tile Row
+	 */
+	MAXIMUM_TILE_ROW("maxTileRow", String.class),	
+	
+	/**
+	 * Minimum Tile Column
+	 */
+	MINIMUM_TILE_COLUMN("minTileCol", String.class),
+	
+	/**
+	 * Maximum Tile Column
+	 */
+	MAXIMUM_TILE_COLUMN("maxTileCol", String.class),
+	
+	/**
+	 * The URI of the TileMatrixSet definition.
+	 */
+	TILE_MATRIX_SET_DEFINITION_URI("tileMatrixSetDefinitionURI", URI.class);
 
 	private final Class attrType;
 

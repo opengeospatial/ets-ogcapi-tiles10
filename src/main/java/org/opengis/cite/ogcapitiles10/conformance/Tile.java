@@ -3,7 +3,10 @@ package org.opengis.cite.ogcapitiles10.conformance;
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.Method.GET;
 import static org.opengis.cite.ogcapitiles10.EtsAssert.assertTrue;
-
+import static org.opengis.cite.ogcapitiles10.SuiteAttribute.API_MODEL;
+import static org.opengis.cite.ogcapitiles10.SuiteAttribute.TILE_MATRIX_SET_DEFINITION_URI;
+import static org.opengis.cite.ogcapitiles10.SuiteAttribute.URL_TEMPLATE_FOR_TILES;
+import static org.opengis.cite.ogcapitiles10.SuiteAttribute.RANGE_OF_VALID_VALUES;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +19,8 @@ import org.opengis.cite.ogcapitiles10.CommonFixture;
 import org.opengis.cite.ogcapitiles10.openapi3.TestPoint;
 import org.opengis.cite.ogcapitiles10.openapi3.UriBuilder;
 import org.testng.Assert;
+import org.testng.ITestContext;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +52,8 @@ public class Tile extends CommonFixture {
 	private String tileRowTemplateString = "tileRow";
 	private String tileColTemplateString = "tileCol";	
 
+	
+	
 	/**
 	 * <pre>
 	 * Implements Abstract test A.2
@@ -56,6 +63,10 @@ public class Tile extends CommonFixture {
 	@Test(description = "Implements Abstract test A.2, Requirement 1: /req/core/tc-op")
 	public void validateTilesAreAvailable() throws Exception {
 		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}
 	
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 
@@ -85,11 +96,10 @@ public class Tile extends CommonFixture {
 		}
 		
 		if(resultString.contains("No tiles resource was found")){  // if the tilesets are not accessible from the landing page, then we check at the collections level
-			System.out.println("CHK-A");
+	
 			resultString = processNestedTilesResponse();
 		}
-		System.out.println("CHK-B");
-		System.out.println("validateTilesAreAvailable "+resultString.length());
+
 		Assert.assertTrue(resultString.length()==0, resultString);
 	
 		
@@ -105,6 +115,10 @@ public class Tile extends CommonFixture {
 	@Test(description = "Implements Abstract test A.6, Requirement 5: /req/core/tc-success")
 	public void validateSuccessfulTilesExecution() throws Exception {
 		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}		
 		
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
@@ -128,7 +142,7 @@ public class Tile extends CommonFixture {
 
 			}
 		
-		System.out.println("validateSuccessfulTilesExecution "+resultString.length());
+	
 		Assert.assertTrue(resultString.length()==0, resultString);
 		
 
@@ -143,6 +157,10 @@ public class Tile extends CommonFixture {
 	@Test(description = "Implements Abstract test A.7: /conf/core/tc-error, Requirement 6: /req/core/tc-error")
 	public void validateTilesErrorConditions() throws Exception {
 		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}		
 		
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
@@ -166,7 +184,7 @@ public class Tile extends CommonFixture {
 
 			}
 		
-		System.out.println("validateSuccessfulTilesExecution "+resultString.length());
+		
 		Assert.assertTrue(resultString.length()==0, resultString);
 		
 
@@ -181,6 +199,10 @@ public class Tile extends CommonFixture {
 	@Test(description = "Implements Abstract test A.3, Requirement 2: /req/core/tc-tilematrix-definition")
 	public void validateTileMatrixDefinitionIsAvailable() throws Exception {
 		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}		
 		
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
@@ -280,7 +302,7 @@ public class Tile extends CommonFixture {
 							{
 								String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString());
 							
-								System.out.println("CHK1 "+newURL2);
+							
 								
 								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
 								innerTilesRequest.then().statusCode(200);
@@ -291,7 +313,7 @@ public class Tile extends CommonFixture {
 								{
 									HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
 									nestedTilesAreAvailable = true;
-									System.out.println("TEST "+innerTileLink.get("href").toString());
+								
 						
 								}
 							}
@@ -342,7 +364,7 @@ public class Tile extends CommonFixture {
 				
 					
 					String newURL = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),linkItem.get("href").toString()); 	
-					System.out.println("CHK2 "+newURL);
+				
 					
 					Response tilesRequest = init().baseUri(newURL).accept(JSON).when().request(GET);
 					tilesRequest.then().statusCode(200);
@@ -358,7 +380,7 @@ public class Tile extends CommonFixture {
 							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
 							{
 								String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString()); 
-								System.out.println("CHK3 "+newURL2);
+						
 								
 								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
 								innerTilesRequest.then().statusCode(200);
@@ -401,6 +423,11 @@ public class Tile extends CommonFixture {
 	 */
 	@Test(description = "Implements Abstract test A.4, Requirement 3: /req/core/tc-tilerow-definition")
 	public void validateTileRowDefinitionIsAvailable() throws Exception {
+		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}		
 		
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
@@ -451,6 +478,11 @@ public class Tile extends CommonFixture {
 	 */
 	@Test(description = "Implements Abstract test A.5, Requirement 4: /req/core/tc-tilecol-definition")
 	public void validateTileColDefinitionIsAvailable() throws Exception {
+		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}		
 		
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
@@ -549,7 +581,7 @@ public class Tile extends CommonFixture {
 			Map<String, Object> tileset = (Map<String, Object>) tilesetObj;
 			
 			String tileMatrixSetId = tileset.get("tileMatrixSetId").toString();
-			System.out.println("WW "+tileMatrixSetId);			
+					
 			
 			ArrayList linksList = (ArrayList) tileset.get("links");
 			
@@ -587,7 +619,7 @@ public class Tile extends CommonFixture {
 										  replace("{"+this.tileRowTemplateString+"}", maxTileRow).
 										  replace("{"+this.tileColTemplateString+"}", minTileCol);		
 								  
-								  System.out.println("CHK4 "+newURL);
+							
 								  
 								  URL urlStr = new URL(newURL);
 								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
@@ -605,7 +637,7 @@ public class Tile extends CommonFixture {
 										  replace("{"+this.tileRowTemplateString+"}", ""+(Integer.parseInt(maxTileRow)+1)).
 										  replace("{"+this.tileColTemplateString+"}", minTileCol);
 								  
-								  System.out.println("CHK5 "+newURL);
+							
 								  
 								  URL urlStr = new URL(newURL);
 								  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opengis.cite.ogcapitiles10.CommonFixture;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import io.restassured.path.json.JsonPath;
@@ -34,6 +35,11 @@ public class LandingPage extends CommonFixture {
 	 */
 	@Test(description = "Implements Abstract test A.10, addresses Requirement 11", groups = "landingpage")
 	public void landingPageRetrieval() {
+		
+		if(rootUri==null)
+		{
+			throw new SkipException(missing_landing_page_error_message);
+		}
 	
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
