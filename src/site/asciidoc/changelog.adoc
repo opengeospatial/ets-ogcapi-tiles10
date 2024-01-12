@@ -1,6 +1,8 @@
 = Release Notes OGC API - Tiles
 
-
-
 == 0.1 (2020-04-23)
-- OGC API - Tiles Sprint
+
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/pull/18[Core conformance class: Separates the testing mandatory tests from optional ones]
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/7[Re-structure test suite at the 2022-11 Sprint]
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/6[Clean up test suite at the 2022-11 Sprint]
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/2[Tiles ETS: outdated test modification at the 2022-11 Sprint]
