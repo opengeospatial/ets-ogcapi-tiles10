@@ -6,3 +6,4 @@
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/7[Re-structure test suite at the 2022-11 Sprint]
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/6[Clean up test suite at the 2022-11 Sprint]
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/2[Tiles ETS: outdated test modification at the 2022-11 Sprint]
+-
