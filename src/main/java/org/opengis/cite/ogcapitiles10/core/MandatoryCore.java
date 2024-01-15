@@ -84,16 +84,12 @@ public class MandatoryCore extends CommonFixture {
 		String minTileColString = testContext.getSuite().getAttribute(MINIMUM_TILE_COLUMN.getName()).toString();
 		String maxTileColString = testContext.getSuite().getAttribute(MAXIMUM_TILE_COLUMN.getName()).toString();
 		
-
-
-
-
 		int tileMatrix = Integer.parseInt(tileMatrixString);
 		int minTileRow = Integer.parseInt(minTileRowString);
 		int maxTileRow = Integer.parseInt(maxTileRowString);
 		int minTileCol = Integer.parseInt(minTileColString);
 		int maxTileCol = Integer.parseInt(maxTileColString);
-	
+		
 		FileReader fis = null;
 		boolean foundRegisteredTileMatrixSetDefinition = false;
 		boolean tileMatrixSetDefinitionInUrlTemplate = false;
@@ -186,27 +182,32 @@ public class MandatoryCore extends CommonFixture {
 	{
 	
 		
-		if(!params.containsKey("tilematrixsetdefinitionuri")) {		
+		if(!params.containsKey("tilematrixsetdefinitionuri") || params.get("tilematrixsetdefinitionuri").isEmpty()) {		
 			Assert.fail("A tile matrix set definition uri was not found in the test inputs.");
 		}
-		if(!params.containsKey("urltemplatefortiles")) {		
+		if(!params.containsKey("urltemplatefortiles") || params.get("urltemplatefortiles").isEmpty()) {		
 			Assert.fail("A url template was not found in the test inputs.");
 		}		
-		if(!params.containsKey("tilematrix")) {		
+		if(!params.containsKey("tilematrix") || params.get("tilematrix").isEmpty()) {		
 			Assert.fail("A tileMatrix was not found in the test inputs.");
 		}		
-        if (!params.containsKey("mintilerow")) {
+        if (!params.containsKey("mintilerow") || params.get("mintilerow").isEmpty()) {
         	Assert.fail("A minimum tile row number was not found in the test suite inputs.");
         }
-        if (!params.containsKey("maxtilerow")) {
+        if (!params.containsKey("maxtilerow") || params.get("maxtilerow").isEmpty()) {
         	Assert.fail("A maximum tile row number was not found in the test suite inputs.");
         }
-        if (!params.containsKey("mintilecol")) {
+        if (!params.containsKey("mintilecol") || params.get("mintilecol").isEmpty()) {
         	Assert.fail("A minimum tile column number was not found in the test suite inputs.");
         }
-        if (!params.containsKey("maxtilecol")) {
+        if (!params.containsKey("maxtilecol") || params.get("maxtilecol").isEmpty()) {
         	Assert.fail("A maximum tile column number was not found in the test suite inputs.");
         }
+        
+  
+
+        
+        
 	}
 	
 	
