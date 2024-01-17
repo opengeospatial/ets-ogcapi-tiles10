@@ -96,5 +96,19 @@ public class CommonFixture {
 		requestLoggingFilter = new RequestLoggingFilter(requestPrintStream);
 		responseLoggingFilter = new ResponseLoggingFilter(responsePrintStream);
 	}
+	
+	public String formatLinkURI(String scheme, String host, String hrefLink)
+	{
+		String newURL = "";
+		if(hrefLink.contains(scheme+"://"+host)) {
+			  newURL = hrefLink;
+			}
+			else {
+			  newURL = scheme+"://"+host+hrefLink;
+			}
+	
+		
+		return newURL;
+	}
 
 }

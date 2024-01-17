@@ -2,4 +2,87 @@
 
 == Scope
 
-This executable test suite (ETS) verifies that an OGC API - Tiles instance.
+This executable test suite (ETS) verifies that an OGC API - Tiles - Part 1 v1.0 instance complies with the Standard.
+
+Conformance testing is a kind of "black box" testing that examines externally visible characteristics or behaviors of the implementation and is independent of any implementation details.
+
+Several conformance classes are defined in the principal specifications. The ones
+listed below are covered by this test suite:
+
+* Annex A.1: Core - Mandatory tests
+* Annex A.1: Core - Conditional tests
+* Annex A.3: Tilesets List
+* Annex A.4: Dataset Tilesets
+* Annex A.5: GeoData Tilesets
+* Annex A.8: OpenAPI Specification 3.0 
+
+== Test requirements
+
+The documents listed below stipulate requirements that the Executable Test Suite tests for compliance to. Only one of the standards listed below needs to be supported.
+
+1. https://docs.ogc.org/is/20-057/20-057.html[OGC API - Tiles - Part 1: Core, version 1.0.0, specified in OGC 20-057]
+
+== Test suite structure
+
+The test suite definition file (testng.xml) is located in the root package, `org.opengis.cite.ogcapitiles10`.
+
+The Javadoc documentation provides more detailed information about the test
+methods that constitute the suite.
+
+include::how-to-run-the-tests.adoc[]
+
+== Using the REST API
+
+Using the REST API of the TEAM Engine requires some run arguments. These are summarized in the following table.
+The _Obligation_ descriptor can have the following values: M (mandatory), O (optional), or C (conditional).
+
+.Test run arguments
+[cols="1,1,1,6",options=header]
+|===
+|Name
+|Value domain
+|Obligation
+|Description
+
+|iut
+|URI
+|O
+|A URI that refers to the landing page of the implementation under test. Ampersand ('&amp;') characters must be percent-encoded as '%26'.
+
+|tilematrixsetdefinitionuri
+|URI
+|M
+|A URI of a registered tile matrix set definition
+
+
+|urltemplatefortiles
+|URL template
+|M
+|URL template that contains the endpoint for tiles, with specific variable names tileMatrix, tileRow and tileCol 
+
+|tilematrix
+|Integer
+|M
+|A valid tileMatrix numerical identifier (e.g. 1)
+
+|mintilerow
+|Integer
+|M
+|The minimum tile row number (minTileRow) for the tile matrix (e.g. 0)
+
+|maxtilerow
+|Integer
+|M
+|The maximum tile row number (maxTileRow) for the tile matrix (e.g. 1)
+
+|mintilecol
+|Integer
+|M
+|The minimum tile column number (minTileCol) for the tile matrix (e.g. 0)
+
+|maxtilecol
+|Integer
+|M
+|The maximum tile column number (maxTileCol) for the tile matrix (e.g. 1)
+
+|===

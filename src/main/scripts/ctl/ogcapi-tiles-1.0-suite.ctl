@@ -38,7 +38,12 @@
             </ul>
             <p>The following conformance levels are defined:</p>
             <ul>
-              <li>Core</li>
+              <li>Annex A.1: Core - Mandatory tests</li>
+              <li>Annex A.1: Core - Conditional tests</li>
+              <li>Annex A.3: Tilesets List</li>
+              <li>Annex A.4: Dataset Tilesets</li>
+              <li>Annex A.5: GeoData Tilesets</li>
+              <li>Annex A.8: OpenAPI Specification 3.0</li>              
             </ul>
           </div>
           <fieldset style="background:#ccffff">

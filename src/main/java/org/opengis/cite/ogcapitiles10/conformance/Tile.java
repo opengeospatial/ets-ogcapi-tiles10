@@ -242,17 +242,7 @@ public class Tile extends CommonFixture {
 
 	}
 	
-	private String formatLinkURI(String scheme, String host, String hrefLink)
-	{
-		String newURL = "";
-		if(hrefLink.contains(scheme+"://"+host)) {
-			  newURL = hrefLink;
-			}
-			else {
-			  newURL = scheme+"://"+host+hrefLink;
-			}
-		return newURL;
-	}
+
 	
 	private String processNestedTilesResponse()
 	{
@@ -298,23 +288,25 @@ public class Tile extends CommonFixture {
 						for(int p=0; p<tilesetLinksList.size(); p++)
 						{
 							HashMap tilesetLink = (HashMap) tilesetLinksList.get(p);
-							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
-							{
-								String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString());
-							
-							
-								
-								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
-								innerTilesRequest.then().statusCode(200);
-								JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
-								List<Object> innerTilesLinks = innerTilesResponse.getList("links");
-								
-								for(int x=0; x < innerTilesLinks.size(); x++)
+							if(tilesetLink.containsKey("rel") && tilesetLink.containsKey("type")) {
+								if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
 								{
-									HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
-									nestedTilesAreAvailable = true;
+									String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString());
 								
-						
+								
+									
+									Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
+									innerTilesRequest.then().statusCode(200);
+									JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
+									List<Object> innerTilesLinks = innerTilesResponse.getList("links");
+									
+									for(int x=0; x < innerTilesLinks.size(); x++)
+									{
+										HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
+										nestedTilesAreAvailable = true;
+									
+							
+									}
 								}
 							}
 						}
@@ -377,24 +369,26 @@ public class Tile extends CommonFixture {
 						for(int p=0; p<tilesetLinksList.size(); p++)
 						{
 							HashMap tilesetLink = (HashMap) tilesetLinksList.get(p);
-							if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
-							{
-								String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString()); 
-						
-								
-								Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
-								innerTilesRequest.then().statusCode(200);
-								JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
-								List<Object> innerTilesLinks = innerTilesResponse.getList("links");
-								
-								for(int x=0; x < innerTilesLinks.size(); x++)
+							if(tilesetLink.containsKey("rel") && tilesetLink.containsKey("type")) {
+								if(tilesetLink.get("rel").toString().equals("self") && tilesetLink.get("type").toString().equals("application/json"))
 								{
-									HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
-									if(innerTileLink.get("href").toString().contains("{"+definitionTemplate+"}"))
+									String newURL2 = formatLinkURI(rootUri.getScheme(),rootUri.getHost(),tilesetLink.get("href").toString()); 
+							
+									
+									Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when().request(GET);
+									innerTilesRequest.then().statusCode(200);
+									JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
+									List<Object> innerTilesLinks = innerTilesResponse.getList("links");
+									
+									for(int x=0; x < innerTilesLinks.size(); x++)
 									{
-										  foundTemplates = true;
+										HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
+										if(innerTileLink.get("href").toString().contains("{"+definitionTemplate+"}"))
+										{
+											  foundTemplates = true;
+										}
+							
 									}
-						
 								}
 							}
 						}

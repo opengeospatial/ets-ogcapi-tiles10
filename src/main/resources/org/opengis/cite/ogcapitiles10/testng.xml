@@ -23,12 +23,7 @@
       <package name="org.opengis.cite.ogcapitiles10.core" />
     </packages>
   </test>
-  
-  <test name="Preconditions">
-    <classes>
-      <class name="org.opengis.cite.ogcapitiles10.SuitePreconditions" />
-    </classes>
-  </test>  
+ 
 
   <test name="Conditional Core">
     <packages>
@@ -52,8 +47,14 @@
 
   <test name="Dataset Tilesets">
     <packages>
-      <package name="org.opengis.cite.ogcapitiles10.landingpage" />
+      <package name="org.opengis.cite.ogcapitiles10.datasettilesets" />
     </packages>
   </test>
+  
+  <test name="GeoData Tilesets">
+    <packages>
+      <package name="org.opengis.cite.ogcapitiles10.geodatatilesets" />
+    </packages>
+  </test>  
 
 </suite>

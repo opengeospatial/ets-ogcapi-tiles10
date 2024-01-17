@@ -1,4 +1,4 @@
-package org.opengis.cite.ogcapitiles10.landingpage;
+package org.opengis.cite.ogcapitiles10.datasettilesets;
 
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.Method.GET;
@@ -59,10 +59,7 @@ public class LandingPage extends CommonFixture {
 				hasTilesets = true;			
 		}
 		assertTrue(hasTilesets,
-				"The landing page must include at least links with relation types "+
-						"http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector, " +
-						"http://www.opengis.net/def/rel/ogc/1.0/tilesets-map or "+
-						"http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage"
+				"Requirement 11 states that if the API has a mechanism for exposing root resources (e.g., a landing page), the API SHALL advertise at least one URI to retrieve a tilesets list provided by this service with a link having a rel value: http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector, http://www.opengis.net/def/rel/ogc/1.0/tilesets-map or http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage. However, the landing page did not have any such links."
 				
 				);
 
