@@ -109,7 +109,7 @@ public class MandatoryCore extends CommonFixture {
 				if(tileMatrixSetDefinitionURI.toLowerCase().equals(records.get(i).get(1).toLowerCase())) {
 					foundRegisteredTileMatrixSetDefinition = true;					
 					
-					tileMatrixSetDefinitionInUrlTemplate = urlTemplate.contains("/tiles/"+records.get(i).get(0)) | urlTemplate.contains("/tiles/{tileMatrixSetId}");
+					tileMatrixSetDefinitionInUrlTemplate = urlTemplate.contains("/tiles/"+records.get(i).get(0)) || urlTemplate.contains("/tiles/{tileMatrixSetId}");
 				
 				}
 			}
@@ -127,27 +127,30 @@ public class MandatoryCore extends CommonFixture {
 		
 
 
-		boolean allRequestsSuccessful = false;
+		TileResponseMetadata tileResponseMetadata = new TileResponseMetadata(false,-1);
 		
 		try {
-		  allRequestsSuccessful = getTile(tileMatrix,minTileRow,maxTileRow,minTileCol, maxTileCol,urlTemplate);
+
+			tileResponseMetadata = getTile(tileMatrix,minTileRow,maxTileRow,minTileCol, maxTileCol,urlTemplate);
 		}
 		catch(Exception ex)
 		{
 			ex.printStackTrace();
 		}
 		
-		Assert.assertTrue(allRequestsSuccessful, "A successful execution of the operation with content responds with a HTTP status code 200, but the respose code was not 200.");
+		if(tileResponseMetadata.areAllRequestsSuccessful()==false) {
+			Assert.fail("Requirement 5A states that a successful execution of the tile operation with content SHALL be reported as a response with an HTTP status code 200. However, the respose code was "+tileResponseMetadata.getResponseCode()+".");
+		}
 			
 
 		
 	}
 	
 	
-	private boolean getTile(int tileMatrix,int minTileRow,int maxTileRow,int minTileCol,int maxTileCol, String urlTemplate) throws Exception {
+	private TileResponseMetadata getTile(int tileMatrix,int minTileRow,int maxTileRow,int minTileCol,int maxTileCol, String urlTemplate) throws Exception {
 		
-		boolean allRequestsSuccessful = true;
 		
+		TileResponseMetadata tileResponseMetadata = new TileResponseMetadata(true,-1); //allRequestsSuccessful,responseCode
 		
 		String urlString = null;
 		
@@ -156,17 +159,20 @@ public class MandatoryCore extends CommonFixture {
 			
 			for(int c = minTileCol; c <= maxTileCol; c++ ) {
 		
-				urlString = urlTemplate.replace("{tileMatrix}", tileMatrix+"").replace("{tileRow}", r+"").replace("{tileCol}", c+"");		
+				urlString = urlTemplate.replace("{tileMatrix}", tileMatrix+"").replace("{tileRow}", r+"").replace("{tileCol}", c+"");	
+				
 		
 				
 				  URL urlStr = new URL(urlString);
 				  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
 				   
 				  int responseCode = httpConn.getResponseCode();
+				  
+				  tileResponseMetadata.setResponseCode(responseCode);
 				
 				  if(responseCode!=200)
 				  {
-					  allRequestsSuccessful = false;
+					  tileResponseMetadata.setAllRequestsSuccessful(false);
 			
 				  } 
 				  
@@ -175,7 +181,7 @@ public class MandatoryCore extends CommonFixture {
 			}
 		}
 		
-		return allRequestsSuccessful;
+		return tileResponseMetadata;
 	}
 	
 	private void checkInputs(Map<String, String> params)
@@ -236,18 +242,20 @@ public class MandatoryCore extends CommonFixture {
 		
 		String urlString = null;
 		
-		int invalidTileRow = maxTileRow + 100;
-		int invalidTileCol = maxTileCol + 100;
+		int invalidTileRow = Integer.MAX_VALUE;
+		int invalidTileCol = Integer.MAX_VALUE;
 		
 		urlString = urlTemplate.replace("{tileMatrix}", tileMatrix+"").replace("{tileRow}", invalidTileRow+"").replace("{tileCol}", invalidTileCol+"");		
-		
+
 		
 		URL urlStr = new URL(urlString);
 		HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
 		   
 		int responseCode = httpConn.getResponseCode();
 				
-		Assert.assertTrue(responseCode==404 || responseCode==400, "If the path parameter values tileMatrix, tileRow, tileCol for a tile request are out-of-range, the HTTP response must be status code 404 or a 400. However, the response code was "+responseCode);
+		if(responseCode!=404 && responseCode!=400) {
+			Assert.fail("Requirement 6A states that if the path parameter values tileMatrix, tileRow, tileCol for a tile request are out-of-range (outside the tile matrix set or tile matrix set limits of the resource), the HTTP response SHALL use a status code 404 or a 400. However, the response code was "+responseCode+".");
+		}
 			
 
 		
