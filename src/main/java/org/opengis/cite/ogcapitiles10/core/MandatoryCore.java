@@ -57,11 +57,13 @@ import java.util.Scanner;
 public class MandatoryCore extends CommonFixture {
 
 	private JsonPath response;
-	private String tileMatrixTemplateString = "tileMatrix";
-	private String tileRowTemplateString = "tileRow";
-	private String tileColTemplateString = "tileCol";	
 
-	
+	private String tileMatrixTemplateString = "tileMatrix";
+
+	private String tileRowTemplateString = "tileRow";
+
+	private String tileColTemplateString = "tileCol";
+
 	/**
 	 * <pre>
 	 * Implements Abstract test A.6
@@ -70,153 +72,140 @@ public class MandatoryCore extends CommonFixture {
 	 */
 	@Test(description = "Implements Abstract test A.6, Requirement 5: /req/core/tc-success")
 	public void verifyMinimalConformance(ITestContext testContext) throws Exception {
-		
-		Map<String, String> params = testContext.getSuite().getXmlSuite().getParameters();	
-		
-		checkInputs(params);		
-		
+
+		Map<String, String> params = testContext.getSuite().getXmlSuite().getParameters();
+
+		checkInputs(params);
+
 		String urlTemplate = testContext.getSuite().getAttribute(URL_TEMPLATE_FOR_TILES.getName()).toString();
-		String tileMatrixSetDefinitionURI = testContext.getSuite().getAttribute(TILE_MATRIX_SET_DEFINITION_URI.getName()).toString();		
+		String tileMatrixSetDefinitionURI = testContext.getSuite()
+				.getAttribute(TILE_MATRIX_SET_DEFINITION_URI.getName()).toString();
 
 		String tileMatrixString = testContext.getSuite().getAttribute(TILE_MATRIX.getName()).toString();
 		String minTileRowString = testContext.getSuite().getAttribute(MINIMUM_TILE_ROW.getName()).toString();
 		String maxTileRowString = testContext.getSuite().getAttribute(MAXIMUM_TILE_ROW.getName()).toString();
 		String minTileColString = testContext.getSuite().getAttribute(MINIMUM_TILE_COLUMN.getName()).toString();
 		String maxTileColString = testContext.getSuite().getAttribute(MAXIMUM_TILE_COLUMN.getName()).toString();
-		
+
 		int tileMatrix = Integer.parseInt(tileMatrixString);
 		int minTileRow = Integer.parseInt(minTileRowString);
 		int maxTileRow = Integer.parseInt(maxTileRowString);
 		int minTileCol = Integer.parseInt(minTileColString);
 		int maxTileCol = Integer.parseInt(maxTileColString);
-		
+
 		FileReader fis = null;
 		boolean foundRegisteredTileMatrixSetDefinition = false;
 		boolean tileMatrixSetDefinitionInUrlTemplate = false;
 		try {
-			
+
 			List<List<String>> records = new ArrayList<>();
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/org/opengis/cite/ogcapitiles10/tilematrixsetdefinitions.csv")))) {
-			    String line;
-			    while ((line = br.readLine()) != null) {
-			        String[] values = line.split(",");
-			        records.add(Arrays.asList(values));
-			    }
-			}
-			
-			for(int i=0; i < records.size(); i++) {
-		
-				if(tileMatrixSetDefinitionURI.toLowerCase().equals(records.get(i).get(1).toLowerCase())) {
-					foundRegisteredTileMatrixSetDefinition = true;					
-					
-					tileMatrixSetDefinitionInUrlTemplate = urlTemplate.contains("/tiles/"+records.get(i).get(0)) || urlTemplate.contains("/tiles/{tileMatrixSetId}");
-				
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass()
+					.getResourceAsStream("/org/opengis/cite/ogcapitiles10/tilematrixsetdefinitions.csv")))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					String[] values = line.split(",");
+					records.add(Arrays.asList(values));
 				}
 			}
-			
-			
+
+			for (int i = 0; i < records.size(); i++) {
+
+				if (tileMatrixSetDefinitionURI.toLowerCase().equals(records.get(i).get(1).toLowerCase())) {
+					foundRegisteredTileMatrixSetDefinition = true;
+
+					tileMatrixSetDefinitionInUrlTemplate = urlTemplate.contains("/tiles/" + records.get(i).get(0))
+							|| urlTemplate.contains("/tiles/{tileMatrixSetId}");
+
+				}
+			}
+
 		}
-		catch(Exception ex)
-		{
-	
+		catch (Exception ex) {
+
 			ex.printStackTrace();
 		}
-		
-		Assert.assertTrue(foundRegisteredTileMatrixSetDefinition,"The tile matrix set definition is unknown. Please use the URI of a registered tile matrix set definition. The URIs can be found at https://defs.opengis.net/vocprez/object?uri=http%3A//www.opengis.net/def/tms");
-		Assert.assertTrue(tileMatrixSetDefinitionInUrlTemplate,"Neither the user-provided tile matrix set definition nor its variable ({tileMatrixSetId}) was found in the url template");
-		
 
+		Assert.assertTrue(foundRegisteredTileMatrixSetDefinition,
+				"The tile matrix set definition is unknown. Please use the URI of a registered tile matrix set definition. The URIs can be found at https://defs.opengis.net/vocprez/object?uri=http%3A//www.opengis.net/def/tms");
+		Assert.assertTrue(tileMatrixSetDefinitionInUrlTemplate,
+				"Neither the user-provided tile matrix set definition nor its variable ({tileMatrixSetId}) was found in the url template");
 
-		TileResponseMetadata tileResponseMetadata = new TileResponseMetadata(false,-1);
-		
+		TileResponseMetadata tileResponseMetadata = new TileResponseMetadata(false, -1);
+
 		try {
 
-			tileResponseMetadata = getTile(tileMatrix,minTileRow,maxTileRow,minTileCol, maxTileCol,urlTemplate);
+			tileResponseMetadata = getTile(tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol, urlTemplate);
 		}
-		catch(Exception ex)
-		{
+		catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		if(tileResponseMetadata.areAllRequestsSuccessful()==false) {
-			Assert.fail("Requirement 5A states that a successful execution of the tile operation with content SHALL be reported as a response with an HTTP status code 200. However, the respose code was "+tileResponseMetadata.getResponseCode()+".");
-		}
-			
 
-		
+		if (tileResponseMetadata.areAllRequestsSuccessful() == false) {
+			Assert.fail(
+					"Requirement 5A states that a successful execution of the tile operation with content SHALL be reported as a response with an HTTP status code 200. However, the respose code was "
+							+ tileResponseMetadata.getResponseCode() + ".");
+		}
+
 	}
-	
-	
-	private TileResponseMetadata getTile(int tileMatrix,int minTileRow,int maxTileRow,int minTileCol,int maxTileCol, String urlTemplate) throws Exception {
-		
-		
-		TileResponseMetadata tileResponseMetadata = new TileResponseMetadata(true,-1); //allRequestsSuccessful,responseCode
-		
+
+	private TileResponseMetadata getTile(int tileMatrix, int minTileRow, int maxTileRow, int minTileCol, int maxTileCol,
+			String urlTemplate) throws Exception {
+
+		TileResponseMetadata tileResponseMetadata = new TileResponseMetadata(true, -1); // allRequestsSuccessful,responseCode
+
 		String urlString = null;
-		
-		
-		for(int r = minTileRow; r <= maxTileRow; r++ ) {
-			
-			for(int c = minTileCol; c <= maxTileCol; c++ ) {
-		
-				urlString = urlTemplate.replace("{tileMatrix}", tileMatrix+"").replace("{tileRow}", r+"").replace("{tileCol}", c+"");	
-				
-		
-				
-				  URL urlStr = new URL(urlString);
-				  HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
-				   
-				  int responseCode = httpConn.getResponseCode();
-				  
-				  tileResponseMetadata.setResponseCode(responseCode);
-				
-				  if(responseCode!=200)
-				  {
-					  tileResponseMetadata.setAllRequestsSuccessful(false);
-			
-				  } 
-				  
-	
-				
+
+		for (int r = minTileRow; r <= maxTileRow; r++) {
+
+			for (int c = minTileCol; c <= maxTileCol; c++) {
+
+				urlString = urlTemplate.replace("{tileMatrix}", tileMatrix + "").replace("{tileRow}", r + "")
+						.replace("{tileCol}", c + "");
+
+				URL urlStr = new URL(urlString);
+				HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
+
+				int responseCode = httpConn.getResponseCode();
+
+				tileResponseMetadata.setResponseCode(responseCode);
+
+				if (responseCode != 200) {
+					tileResponseMetadata.setAllRequestsSuccessful(false);
+
+				}
+
 			}
 		}
-		
+
 		return tileResponseMetadata;
 	}
-	
-	private void checkInputs(Map<String, String> params)
-	{
-	
-		
-		if(!params.containsKey("tilematrixsetdefinitionuri") || params.get("tilematrixsetdefinitionuri").isEmpty()) {		
+
+	private void checkInputs(Map<String, String> params) {
+
+		if (!params.containsKey("tilematrixsetdefinitionuri") || params.get("tilematrixsetdefinitionuri").isEmpty()) {
 			Assert.fail("A tile matrix set definition uri was not found in the test inputs.");
 		}
-		if(!params.containsKey("urltemplatefortiles") || params.get("urltemplatefortiles").isEmpty()) {		
+		if (!params.containsKey("urltemplatefortiles") || params.get("urltemplatefortiles").isEmpty()) {
 			Assert.fail("A url template was not found in the test inputs.");
-		}		
-		if(!params.containsKey("tilematrix") || params.get("tilematrix").isEmpty()) {		
+		}
+		if (!params.containsKey("tilematrix") || params.get("tilematrix").isEmpty()) {
 			Assert.fail("A tileMatrix was not found in the test inputs.");
-		}		
-        if (!params.containsKey("mintilerow") || params.get("mintilerow").isEmpty()) {
-        	Assert.fail("A minimum tile row number was not found in the test suite inputs.");
-        }
-        if (!params.containsKey("maxtilerow") || params.get("maxtilerow").isEmpty()) {
-        	Assert.fail("A maximum tile row number was not found in the test suite inputs.");
-        }
-        if (!params.containsKey("mintilecol") || params.get("mintilecol").isEmpty()) {
-        	Assert.fail("A minimum tile column number was not found in the test suite inputs.");
-        }
-        if (!params.containsKey("maxtilecol") || params.get("maxtilecol").isEmpty()) {
-        	Assert.fail("A maximum tile column number was not found in the test suite inputs.");
-        }
-        
-  
+		}
+		if (!params.containsKey("mintilerow") || params.get("mintilerow").isEmpty()) {
+			Assert.fail("A minimum tile row number was not found in the test suite inputs.");
+		}
+		if (!params.containsKey("maxtilerow") || params.get("maxtilerow").isEmpty()) {
+			Assert.fail("A maximum tile row number was not found in the test suite inputs.");
+		}
+		if (!params.containsKey("mintilecol") || params.get("mintilecol").isEmpty()) {
+			Assert.fail("A minimum tile column number was not found in the test suite inputs.");
+		}
+		if (!params.containsKey("maxtilecol") || params.get("maxtilecol").isEmpty()) {
+			Assert.fail("A maximum tile column number was not found in the test suite inputs.");
+		}
 
-        
-        
 	}
-	
-	
+
 	/**
 	 * <pre>
 	 * Implements Abstract test A.7
@@ -225,40 +214,41 @@ public class MandatoryCore extends CommonFixture {
 	 */
 	@Test(description = "Implements Abstract test A.7, Requirement 6: /req/core/tc-error")
 	public void verifyErrorResponses(ITestContext testContext) throws Exception {
-		
-		Map<String, String> params = testContext.getSuite().getXmlSuite().getParameters();	
-		
+
+		Map<String, String> params = testContext.getSuite().getXmlSuite().getParameters();
+
 		checkInputs(params);
-		
+
 		String urlTemplate = testContext.getSuite().getAttribute(URL_TEMPLATE_FOR_TILES.getName()).toString();
 		int tileMatrix = Integer.parseInt(testContext.getSuite().getAttribute(TILE_MATRIX.getName()).toString());
 		int minTileRow = Integer.parseInt(testContext.getSuite().getAttribute(MINIMUM_TILE_ROW.getName()).toString());
 		int maxTileRow = Integer.parseInt(testContext.getSuite().getAttribute(MAXIMUM_TILE_ROW.getName()).toString());
-		int minTileCol = Integer.parseInt(testContext.getSuite().getAttribute(MINIMUM_TILE_COLUMN.getName()).toString());
-		int maxTileCol = Integer.parseInt(testContext.getSuite().getAttribute(MAXIMUM_TILE_COLUMN.getName()).toString());	
-	
+		int minTileCol = Integer
+				.parseInt(testContext.getSuite().getAttribute(MINIMUM_TILE_COLUMN.getName()).toString());
+		int maxTileCol = Integer
+				.parseInt(testContext.getSuite().getAttribute(MAXIMUM_TILE_COLUMN.getName()).toString());
+
 		boolean allRequestsSuccessful = true;
-		
-		
+
 		String urlString = null;
-		
+
 		int invalidTileRow = Integer.MAX_VALUE;
 		int invalidTileCol = Integer.MAX_VALUE;
-		
-		urlString = urlTemplate.replace("{tileMatrix}", tileMatrix+"").replace("{tileRow}", invalidTileRow+"").replace("{tileCol}", invalidTileCol+"");		
 
-		
+		urlString = urlTemplate.replace("{tileMatrix}", tileMatrix + "").replace("{tileRow}", invalidTileRow + "")
+				.replace("{tileCol}", invalidTileCol + "");
+
 		URL urlStr = new URL(urlString);
 		HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
-		   
-		int responseCode = httpConn.getResponseCode();
-				
-		if(responseCode!=404 && responseCode!=400) {
-			Assert.fail("Requirement 6A states that if the path parameter values tileMatrix, tileRow, tileCol for a tile request are out-of-range (outside the tile matrix set or tile matrix set limits of the resource), the HTTP response SHALL use a status code 404 or a 400. However, the response code was "+responseCode+".");
-		}
-			
 
-		
-	}	
-	
+		int responseCode = httpConn.getResponseCode();
+
+		if (responseCode != 404 && responseCode != 400) {
+			Assert.fail(
+					"Requirement 6A states that if the path parameter values tileMatrix, tileRow, tileCol for a tile request are out-of-range (outside the tile matrix set or tile matrix set limits of the resource), the HTTP response SHALL use a status code 404 or a 400. However, the response code was "
+							+ responseCode + ".");
+		}
+
+	}
+
 }
