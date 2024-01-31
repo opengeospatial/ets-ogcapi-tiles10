@@ -21,18 +21,16 @@ public class SuitePreconditions {
 	@BeforeSuite
 	@SuppressWarnings("rawtypes")
 	public void verifyTestSubject(ITestContext testContext) {
-		/*SuiteAttribute testFileAttr = SuiteAttribute.TEST_SUBJ_FILE;
-		Object sutObj = testContext.getSuite().getAttribute(testFileAttr.getName());
-		Class expectedType = testFileAttr.getType();
-		if (null != sutObj && expectedType.isInstance(sutObj)) {
-			// TODO: Verify test subject
-		}
-		else {
-			String msg = String.format("Value of test suite attribute '%s' is missing or is not an instance of %s",
-					testFileAttr.getName(), expectedType.getName());
-			LOGR.log(Level.SEVERE, msg);
-			throw new AssertionError(msg);
-		}*/
+		/*
+		 * SuiteAttribute testFileAttr = SuiteAttribute.TEST_SUBJ_FILE; Object sutObj =
+		 * testContext.getSuite().getAttribute(testFileAttr.getName()); Class expectedType
+		 * = testFileAttr.getType(); if (null != sutObj &&
+		 * expectedType.isInstance(sutObj)) { // TODO: Verify test subject } else { String
+		 * msg = String.
+		 * format("Value of test suite attribute '%s' is missing or is not an instance of %s"
+		 * , testFileAttr.getName(), expectedType.getName()); LOGR.log(Level.SEVERE, msg);
+		 * throw new AssertionError(msg); }
+		 */
 	}
 
 }

@@ -35,33 +35,32 @@ public class LandingPage extends CommonFixture {
 	 */
 	@Test(description = "Implements Abstract test A.10, addresses Requirement 11", groups = "landingpage")
 	public void landingPageRetrieval() {
-		
-		if(rootUri==null)
-		{
+
+		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);
 		}
-	
+
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/");
 		request.then().statusCode(200);
-		response = request.jsonPath();	
-		
+		response = request.jsonPath();
+
 		List<Object> links = response.getList("links");
-		
+
 		boolean hasTilesets = false;
 
 		for (Object link : links) {
 			Map<String, Object> linkMap = (Map<String, Object>) link;
 			Object linkType = linkMap.get("rel");
-		
-			if(linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector") || 
-					linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-map") || 
-					linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage")) 
-				hasTilesets = true;			
+
+			if (linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector")
+					|| linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-map")
+					|| linkType.toString().startsWith("http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage"))
+				hasTilesets = true;
 		}
 		assertTrue(hasTilesets,
 				"Requirement 11 states that if the API has a mechanism for exposing root resources (e.g., a landing page), the API SHALL advertise at least one URI to retrieve a tilesets list provided by this service with a link having a rel value: http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector, http://www.opengis.net/def/rel/ogc/1.0/tilesets-map or http://www.opengis.net/def/rel/ogc/1.0/tilesets-coverage. However, the landing page did not have any such links."
-				
-				);
+
+		);
 
 	}
 

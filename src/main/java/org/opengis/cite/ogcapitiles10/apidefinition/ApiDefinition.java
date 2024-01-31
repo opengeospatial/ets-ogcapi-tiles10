@@ -35,63 +35,53 @@ public class ApiDefinition extends CommonFixture {
 
 	@BeforeClass(dependsOnMethods = "initCommonFixture")
 	public void retrieveApiUrl() {
-		
 
-		if(rootUri!=null)
-		{
-		
+		if (rootUri != null) {
+
 			Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET);
 			JsonPath jsonPath = request.jsonPath();
-	
+
 			this.apiUrl = parseApiUrl(jsonPath);
-			
+
 		}
 
 	}
 
 	@BeforeClass(dependsOnMethods = "retrieveApiUrl")
 	public void openapiDocumentRetrieval() {
-		
-	
-		
-		if (apiUrl != null)
-		{		
-		
+
+		if (apiUrl != null) {
+
 			Response request = init().baseUri(apiUrl).accept(OPEN_API_MIME_TYPE).when().request(GET);
-		
+
 			request.then().statusCode(200);
-		
+
 			response = request.asString();
 		}
-		
-	
+
 	}
 
 	/**
-	 * Implements Abstract test A.23: /conf/oas30/completeness
-	 * Partly addresses Requirement 22: /req/oas30/completeness
+	 * Implements Abstract test A.23: /conf/oas30/completeness Partly addresses
+	 * Requirement 22: /req/oas30/completeness
 	 * @param testContext never <code>null</code>
 	 * @throws MalformedURLException if the apiUrl is malformed
 	 */
 	@Test(description = "Implements Abstract test A.23, Requirement 22: /req/oas30/completeness",
 			groups = "apidefinition")
 	public void apiDefinitionValidation(ITestContext testContext) throws MalformedURLException {
-		
-		
-		
+
 		OpenApi3Parser parser = new OpenApi3Parser();
 
-		if(apiUrl == null || apiUrl.isEmpty())
-		{
+		if (apiUrl == null || apiUrl.isEmpty()) {
 			throw new SkipException(missing_api_definition_error_message);
 		}
-		
+
 		OpenApi3 apiModel = parser.parse(response, new URL(apiUrl), true);
 		assertTrue(apiModel.isValid(), createValidationMsg(apiModel));
 
 		testContext.getSuite().setAttribute(API_MODEL.getName(), apiModel);
-		
-		
+
 	}
 
 	private String parseApiUrl(JsonPath jsonPath) {

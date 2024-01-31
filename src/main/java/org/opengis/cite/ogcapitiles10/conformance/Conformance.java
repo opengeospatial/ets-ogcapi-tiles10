@@ -41,31 +41,28 @@ import io.restassured.response.Response;
  */
 public class Conformance extends CommonFixture {
 
-	
 	private List<RequirementClass> requirementClasses;
 
 	@DataProvider(name = "conformanceUris")
 	public Object[][] conformanceUris(ITestContext testContext) {
-		
-		if(rootUri==null)
-		{
+
+		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);
 		}
-		
-	    OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute( API_MODEL.getName() );
-        URI iut = (URI) testContext.getSuite().getAttribute( IUT.getName() );
 
-        TestPoint tp = new TestPoint(rootUri.toString(),"/conformance",null);
+		OpenApi3 apiModel = (OpenApi3) testContext.getSuite().getAttribute(API_MODEL.getName());
+		URI iut = (URI) testContext.getSuite().getAttribute(IUT.getName());
 
+		TestPoint tp = new TestPoint(rootUri.toString(), "/conformance", null);
 
-        List<TestPoint> testPoints = new ArrayList<TestPoint>();
-        testPoints.add(tp);
-        Object[][] testPointsData = new Object[1][];
-        int i = 0;
-        for ( TestPoint testPoint : testPoints ) {
-            testPointsData[i++] = new Object[] { testPoint };
-        }
-        return testPointsData;
+		List<TestPoint> testPoints = new ArrayList<TestPoint>();
+		testPoints.add(tp);
+		Object[][] testPointsData = new Object[1][];
+		int i = 0;
+		for (TestPoint testPoint : testPoints) {
+			testPointsData[i++] = new Object[] { testPoint };
+		}
+		return testPointsData;
 	}
 
 	@AfterClass
@@ -74,16 +71,15 @@ public class Conformance extends CommonFixture {
 	}
 
 	/**
-	 * Implements Abstract test A.1
-	 * Partly addresses Requirement 7: /req/core/conformance-success
+	 * Implements Abstract test A.1 Partly addresses Requirement 7:
+	 * /req/core/conformance-success
 	 * @param testPoint the test point to test, never <code>null</code>
 	 */
 	@Test(description = "Implements Abstract test A.1, Requirement 7: /req/core/conformance-success",
 			groups = "conformance", dataProvider = "conformanceUris")
 	public void validateConformanceOperationAndResponse(TestPoint testPoint) {
-		
-		if(rootUri==null)
-		{
+
+		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);
 		}
 

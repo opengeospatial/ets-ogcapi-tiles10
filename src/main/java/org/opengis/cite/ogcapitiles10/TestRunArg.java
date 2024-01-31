@@ -10,10 +10,10 @@ public enum TestRunArg {
 	 * about it.
 	 */
 	IUT,
-	
+
 	/**
 	 * A URI identifying a tile matrix set definition.
-	 */	
+	 */
 	TILE_MATRIX_SET_DEFINITION_URI,
 
 	/**

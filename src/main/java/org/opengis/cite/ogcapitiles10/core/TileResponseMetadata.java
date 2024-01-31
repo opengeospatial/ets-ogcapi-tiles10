@@ -1,13 +1,12 @@
 package org.opengis.cite.ogcapitiles10.core;
 
 public class TileResponseMetadata {
-	
+
 	private boolean allRequestsSuccessful = true;
-	
+
 	private int responseCode = -1;
-	
-	
-	public TileResponseMetadata(boolean allRequestsSuccessful,int responseCode) {
+
+	public TileResponseMetadata(boolean allRequestsSuccessful, int responseCode) {
 		this.allRequestsSuccessful = allRequestsSuccessful;
 		this.responseCode = responseCode;
 	}
@@ -28,5 +27,4 @@ public class TileResponseMetadata {
 		this.responseCode = responseCode;
 	}
 
-	
 }

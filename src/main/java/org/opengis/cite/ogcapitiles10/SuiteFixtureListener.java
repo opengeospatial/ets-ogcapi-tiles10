@@ -51,13 +51,14 @@ public class SuiteFixtureListener implements ISuiteListener {
 	 * @param suite An ISuite object representing a TestNG test suite.
 	 */
 	void processSuiteParameters(ISuite suite) {
-		Map<String, String> params = suite.getXmlSuite().getParameters();		
-			
+		Map<String, String> params = suite.getXmlSuite().getParameters();
+
 		TestSuiteLogger.log(Level.CONFIG, "Suite parameters\n" + params.toString());
 		String iutParam = params.get(TestRunArg.IUT.toString());
 		if ((null == iutParam) || iutParam.isEmpty()) {
-			//throw new IllegalArgumentException("1Required test run parameter not found: " + TestRunArg.IUT.toString());
-			//do nothing
+			// throw new IllegalArgumentException("1Required test run parameter not found:
+			// " + TestRunArg.IUT.toString());
+			// do nothing
 		}
 		else {
 			URI iutRef = URI.create(iutParam.trim());
@@ -73,71 +74,69 @@ public class SuiteFixtureListener implements ISuiteListener {
 					entityFile.getAbsolutePath(), entityFile.length()));
 			suite.setAttribute(SuiteAttribute.TEST_SUBJ_FILE.getName(), entityFile);
 		}
-		
+
 		String tileMatrixSetDefinitionURI = null;
-		
-		if(params.containsKey("tilematrixsetdefinitionuri")) {		
-			tileMatrixSetDefinitionURI = params.get("tilematrixsetdefinitionuri");		
-			if(tileMatrixSetDefinitionURI != null) {
+
+		if (params.containsKey("tilematrixsetdefinitionuri")) {
+			tileMatrixSetDefinitionURI = params.get("tilematrixsetdefinitionuri");
+			if (tileMatrixSetDefinitionURI != null) {
 				suite.setAttribute(SuiteAttribute.TILE_MATRIX_SET_DEFINITION_URI.getName(), tileMatrixSetDefinitionURI);
 			}
 		}
-		
+
 		String urlTemplateForTiles = null;
-		
-		if(params.containsKey("urltemplatefortiles")) {
+
+		if (params.containsKey("urltemplatefortiles")) {
 			urlTemplateForTiles = params.get("urltemplatefortiles");
-			if(urlTemplateForTiles != null) {
+			if (urlTemplateForTiles != null) {
 				suite.setAttribute(SuiteAttribute.URL_TEMPLATE_FOR_TILES.getName(), urlTemplateForTiles);
-			}		
+			}
 		}
-		
+
 		String tileMatrix = null;
-		
-		if(params.containsKey("tilematrix")) {
+
+		if (params.containsKey("tilematrix")) {
 			tileMatrix = params.get("tilematrix");
-			if(tileMatrix != null) {
+			if (tileMatrix != null) {
 				suite.setAttribute(SuiteAttribute.TILE_MATRIX.getName(), tileMatrix);
-			}		
-		}	
-		
-		
+			}
+		}
+
 		String minTileRow = null;
-		
-		if(params.containsKey("mintilerow")) {
+
+		if (params.containsKey("mintilerow")) {
 			minTileRow = params.get("mintilerow");
-			if(minTileRow != null) {
+			if (minTileRow != null) {
 				suite.setAttribute(SuiteAttribute.MINIMUM_TILE_ROW.getName(), minTileRow);
-			}		
-		}	
-		
+			}
+		}
+
 		String maxTileRow = null;
-		
-		if(params.containsKey("maxtilerow")) {
+
+		if (params.containsKey("maxtilerow")) {
 			maxTileRow = params.get("maxtilerow");
-			if(maxTileRow != null) {
+			if (maxTileRow != null) {
 				suite.setAttribute(SuiteAttribute.MAXIMUM_TILE_ROW.getName(), maxTileRow);
-			}		
-		}	
-		
+			}
+		}
+
 		String minTileCol = null;
-		
-		if(params.containsKey("mintilecol")) {
+
+		if (params.containsKey("mintilecol")) {
 			minTileCol = params.get("mintilecol");
-			if(minTileCol != null) {
+			if (minTileCol != null) {
 				suite.setAttribute(SuiteAttribute.MINIMUM_TILE_COLUMN.getName(), minTileCol);
-			}		
-		}		
-		
+			}
+		}
+
 		String maxTileCol = null;
-		
-		if(params.containsKey("maxtilecol")) {
+
+		if (params.containsKey("maxtilecol")) {
 			maxTileCol = params.get("maxtilecol");
-			if(maxTileCol != null) {
+			if (maxTileCol != null) {
 				suite.setAttribute(SuiteAttribute.MAXIMUM_TILE_COLUMN.getName(), maxTileCol);
-			}		
-		}			
-		
+			}
+		}
 
 		String noOfCollections = params.get(TestRunArg.NOOFCOLLECTIONS.toString());
 		try {
