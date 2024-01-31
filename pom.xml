@@ -50,14 +50,15 @@
   <properties>
     <ets-code>ogcapi-tiles-1.0</ets-code>
     <spec-version>0.1</spec-version>
-    <teamengine.version>5.5.2</teamengine.version>
-    <docker.teamengine.version>5.5.2</docker.teamengine.version>
+    <teamengine.version>5.7</teamengine.version>
+    <docker.teamengine.version>5.7</docker.teamengine.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.opengis.cite.teamengine</groupId>
-      <artifactId>teamengine-spi</artifactId>  
+      <artifactId>teamengine-spi</artifactId>
+      <version>${teamengine.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opengis.cite</groupId>
