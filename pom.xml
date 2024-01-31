@@ -59,10 +59,27 @@
       <groupId>org.opengis.cite.teamengine</groupId>
       <artifactId>teamengine-spi</artifactId>
       <version>${teamengine.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>xercesImpl</artifactId>
+          <groupId>xerces</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.12.2</version>
     </dependency>
     <dependency>
       <groupId>org.opengis.cite</groupId>
       <artifactId>schema-utils</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>xercesImpl</artifactId>
+          <groupId>xerces</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>
