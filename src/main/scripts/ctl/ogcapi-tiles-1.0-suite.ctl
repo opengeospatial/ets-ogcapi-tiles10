@@ -57,14 +57,14 @@
 			</p>
 			
 			<p> 
-			 <h3 style="margin-bottom: 0.5em">Inputs for testing compliance to Conformance Class "Core"</h3>			 
+			 <h3 style="margin-bottom: 0.5em">Inputs for testing compliance to Conformance Class "Core" (Mandatory)</h3>			 
 			</p>
 			<p>All of the following inputs are mandatory for testing compliance to Conformance Class "Core". </p>
             
             <p>
               <label for="tilematrixsetdefinitionuri">
                 <h4 style="margin-bottom: 0.5em">Tile Matrix Set Definition URI</h4>
-                The URI of a registered tile matrix set definition that is supported by the API (e.g. http://www.opengis.net/def/tilematrixset/OGC/1.0/WebMercatorQuad)
+                The URI of a registered tile matrix set definition that is supported by the API (e.g. http://www.opengis.net/def/tilematrixset/OGC/1.0/WebMercatorQuad)<br/>
               </label>
               <input id="tilematrixsetdefinitionuri" name="tilematrixsetdefinitionuri" size="128" type="text"
                      value="" />
@@ -73,6 +73,7 @@
             <p>
               <label for="urltemplatefortiles">
                 <h4 style="margin-bottom: 0.5em">URL template (that contains the endpoint for tiles) with specific variable names tileMatrix, tileRow and tileCol</h4>
+                (e.g. https://example.org/ogcapi/collections/example-collection/map/tiles/WebMercatorQuad/{tileMatrix}/{tileRow}/{tileCol}.jpg) <br/>
               </label>
               <input id="urltemplatefortiles" name="urltemplatefortiles" size="128" type="text"
                      value="" />
@@ -81,7 +82,8 @@
             
             <p>
               <label for="tilematrix">
-                <h4 style="margin-bottom: 0.5em">A valid tileMatrix numerical identifier (e.g. 0)</h4>
+                <h4 style="margin-bottom: 0.5em">A valid tileMatrix numerical identifier</h4>
+                 (e.g. 1) <br/>
               </label>
               <input id="tilematrix" name="tilematrix" size="128" type="text"
                      value="" />
@@ -89,7 +91,8 @@
             
             <p>
               <label for="mintilerow">
-                <h4 style="margin-bottom: 0.5em">The minimum tile row number (minTileRow) for the tile matrix (e.g. 0)</h4>
+                <h4 style="margin-bottom: 0.5em">The minimum tile row number (minTileRow) for the tile matrix</h4>
+                 (e.g. 0)<br/>
               </label>
               <input id="mintilerow" name="mintilerow" size="128" type="text"
                      value="" />
@@ -97,7 +100,8 @@
             
             <p>
               <label for="maxtilerow">
-                <h4 style="margin-bottom: 0.5em">The maximum tile row number (maxTileRow) for the tile matrix (e.g. 1)</h4>
+                <h4 style="margin-bottom: 0.5em">The maximum tile row number (maxTileRow) for the tile matrix</h4>
+                (e.g. 1)<br/>
               </label>
               <input id="maxtilerow" name="maxtilerow" size="128" type="text"
                      value="" />
@@ -105,7 +109,8 @@
             
             <p>
               <label for="mintilecol">
-                <h4 style="margin-bottom: 0.5em">The minimum tile column number (minTileCol) for the tile matrix (e.g. 0)</h4>
+                <h4 style="margin-bottom: 0.5em">The minimum tile column number (minTileCol) for the tile matrix </h4>
+                (e.g. 0)<br/>
               </label>
               <input id="mintilecol" name="mintilecol" size="128" type="text"
                      value="" />
@@ -113,14 +118,15 @@
             
             <p>
               <label for="maxtilecol">
-                <h4 style="margin-bottom: 0.5em">The maximum tile column number (maxTileCol) for the tile matrix (e.g. 1)</h4>
+                <h4 style="margin-bottom: 0.5em">The maximum tile column number (maxTileCol) for the tile matrix</h4>
+                (e.g. 1)<br/>
               </label>
               <input id="maxtilecol" name="maxtilecol" size="128" type="text"
                      value="" />
             </p>            
             
             <p> 
-			 <h3 style="margin-bottom: 0.5em">Inputs for testing compliance to other conformance classes</h3>
+			 <h3 style="margin-bottom: 0.5em">Inputs for testing compliance to other conformance classes (Optional)</h3>
 			</p>                         
             
             <p>If the API offers a Conformance Class declaration document and a Landing Page, then provide the URL of the Landing Page below.</p>
