@@ -1,5 +1,9 @@
 = Release Notes OGC API - Tiles
 
+== 0.2 (2024-02-02)
+
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/22[Set spec version number to 1.0 in pom.xml file]
+
 == 0.1 (2020-04-23)
 
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/pull/18[Core conformance class: Separates the testing mandatory tests from optional ones]
