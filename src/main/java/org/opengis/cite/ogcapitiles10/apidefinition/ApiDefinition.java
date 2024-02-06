@@ -80,7 +80,6 @@ public class ApiDefinition extends CommonFixture {
 
 		OpenApi3 apiModel = parser.parse(response, new URL(apiUrl), true);
 
-
 		assertTrue(apiModel.isValid(), createValidationMsg(apiModel));
 
 		testContext.getSuite().setAttribute(API_MODEL.getName(), apiModel);
@@ -110,15 +109,23 @@ public class ApiDefinition extends CommonFixture {
 		boolean hasGetTileOperationId = false;
 
 		for (Map.Entry<String, Path> entry : map.entrySet()) {
-			System.out.println("ACHK " + entry.getKey() + "/" + entry.getValue().getGet().getOperationId());
-			if(entry.getValue().getGet().getOperationId().contains(".getTile")) {
-				hasGetTileOperationId = true;
-				System.out.println("BCHK " + "*******" + entry.getValue().getGet().getOperationId());
+			if(entry.getValue().hasOperations()) {
+				if(entry.getValue().getGet()!=null) {
+					String operationId = ""+entry.getValue().getGet().getOperationId();
+					if (!operationId.trim().equals("null")) {
+						if (operationId.contains(".getTile")) {
+							hasGetTileOperationId = true;
+						}
+				  }
+				}
+			
+
 			}
+			
 		}
 
-		assertTrue(hasGetTileOperationId, "None of the operationIDs matched those specified by Requirement /req/oas30/operation-id and Table 11");
-
+		assertTrue(hasGetTileOperationId,
+				"None of the operationIDs matched those specified by Requirement /req/oas30/operation-id and Table 11");
 
 	}
 
