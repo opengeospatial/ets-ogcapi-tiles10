@@ -114,7 +114,7 @@ public class Tile extends CommonFixture {
 	 * </pre>
 	 */
 	@Test(description = "Implements Abstract test A.6, Requirement 5: /req/core/tc-success")
-	public void validateSuccessfulTilesExecution() throws Exception {
+	public void validateSuccessfulTilesExecutionFollowingLinks() throws Exception {
 
 		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);

@@ -2,6 +2,7 @@ package org.opengis.cite.ogcapitiles10.apidefinition;
 
 import com.reprezen.kaizen.oasparser.OpenApi3Parser;
 import com.reprezen.kaizen.oasparser.model3.OpenApi3;
+import com.reprezen.kaizen.oasparser.model3.Path;
 import com.reprezen.kaizen.oasparser.val.ValidationResults;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -78,9 +79,46 @@ public class ApiDefinition extends CommonFixture {
 		}
 
 		OpenApi3 apiModel = parser.parse(response, new URL(apiUrl), true);
+
+
 		assertTrue(apiModel.isValid(), createValidationMsg(apiModel));
 
 		testContext.getSuite().setAttribute(API_MODEL.getName(), apiModel);
+
+	}
+
+	/**
+	 * Implements Abstract test A.24: /conf/oas30/operation-id Partly addresses
+	 * Requirement 23: /req/oas30/operation-id
+	 * @param testContext never <code>null</code>
+	 * @throws MalformedURLException if the apiUrl is malformed
+	 */
+	@Test(description = "Implements Abstract test A.24, Requirement 23: /req/oas30/operation-id",
+			groups = "apidefinition")
+	public void apiDefinitionOperationIdValidation(ITestContext testContext) throws MalformedURLException {
+
+		OpenApi3Parser parser = new OpenApi3Parser();
+
+		if (apiUrl == null || apiUrl.isEmpty()) {
+			throw new SkipException(missing_api_definition_error_message);
+		}
+
+		OpenApi3 apiModel = parser.parse(response, new URL(apiUrl), true);
+
+		Map<String, Path> map = apiModel.getPaths();
+
+		boolean hasGetTileOperationId = false;
+
+		for (Map.Entry<String, Path> entry : map.entrySet()) {
+			System.out.println("ACHK " + entry.getKey() + "/" + entry.getValue().getGet().getOperationId());
+			if(entry.getValue().getGet().getOperationId().contains(".getTile")) {
+				hasGetTileOperationId = true;
+				System.out.println("BCHK " + "*******" + entry.getValue().getGet().getOperationId());
+			}
+		}
+
+		assertTrue(hasGetTileOperationId, "None of the operationIDs matched those specified by Requirement /req/oas30/operation-id and Table 11");
+
 
 	}
 
