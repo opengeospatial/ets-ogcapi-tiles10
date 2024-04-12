@@ -1,5 +1,9 @@
 = Release Notes OGC API - Tiles
 
+== 1.0 (2024-04-12)
+
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/pull/27[Set status of test suite to Final]
+
 == 0.2 (2024-02-02)
 
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/22[Set spec version number to 1.0 in pom.xml file]
