@@ -1,6 +1,4 @@
-= DRAFT OGC API - Tiles  Executable Test Suite
-
-NOTE: This test suite was prepared for a Code Sprint. It is a proof of concept and *should not* be considered final.
+= OGC API - Tiles  Executable Test Suite
 
 == Scope
 
