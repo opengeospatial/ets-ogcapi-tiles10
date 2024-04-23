@@ -66,11 +66,11 @@ public class MandatoryCore extends CommonFixture {
 
 	/**
 	 * <pre>
-	 * Implements Abstract test A.6
-	 * Addresses Requirement 5: /req/core/tc-success
+	 * Implements Abstract test A.2
+	 * Addresses Requirement 1: /req/core/tc-op
 	 * </pre>
 	 */
-	@Test(description = "Implements Abstract test A.6, Requirement 5: /req/core/tc-success")
+	@Test(description = "Implements Abstract test A.2, Requirement 1: /req/core/tc-op")
 	public void verifyMinimalConformance(ITestContext testContext) throws Exception {
 
 		Map<String, String> params = testContext.getSuite().getXmlSuite().getParameters();
@@ -129,6 +129,69 @@ public class MandatoryCore extends CommonFixture {
 				"The tile matrix set definition is unknown. Please use the URI of a registered tile matrix set definition. The URIs can be found at https://defs.opengis.net/vocprez/object?uri=http%3A//www.opengis.net/def/tms");
 		Assert.assertTrue(tileMatrixSetDefinitionInUrlTemplate,
 				"Neither the user-provided tile matrix set definition nor its variable ({tileMatrixSetId}) was found in the url template");
+
+	}
+
+	/**
+	 * <pre>
+	 * Implements Abstract test A.6
+	 * Addresses Requirement 5: /req/core/tc-success
+	 * </pre>
+	 */
+	@Test(description = "Implements Abstract test A.6, Requirement 5: /req/core/tc-success")
+	public void validateSuccessfulTilesExecution(ITestContext testContext) throws Exception {
+
+		Map<String, String> params = testContext.getSuite().getXmlSuite().getParameters();
+
+		checkInputs(params);
+
+		String urlTemplate = testContext.getSuite().getAttribute(URL_TEMPLATE_FOR_TILES.getName()).toString();
+		String tileMatrixSetDefinitionURI = testContext.getSuite()
+				.getAttribute(TILE_MATRIX_SET_DEFINITION_URI.getName()).toString();
+
+		String tileMatrixString = testContext.getSuite().getAttribute(TILE_MATRIX.getName()).toString();
+		String minTileRowString = testContext.getSuite().getAttribute(MINIMUM_TILE_ROW.getName()).toString();
+		String maxTileRowString = testContext.getSuite().getAttribute(MAXIMUM_TILE_ROW.getName()).toString();
+		String minTileColString = testContext.getSuite().getAttribute(MINIMUM_TILE_COLUMN.getName()).toString();
+		String maxTileColString = testContext.getSuite().getAttribute(MAXIMUM_TILE_COLUMN.getName()).toString();
+
+		int tileMatrix = Integer.parseInt(tileMatrixString);
+		int minTileRow = Integer.parseInt(minTileRowString);
+		int maxTileRow = Integer.parseInt(maxTileRowString);
+		int minTileCol = Integer.parseInt(minTileColString);
+		int maxTileCol = Integer.parseInt(maxTileColString);
+
+		FileReader fis = null;
+		boolean foundRegisteredTileMatrixSetDefinition = false;
+		boolean tileMatrixSetDefinitionInUrlTemplate = false;
+		try {
+
+			List<List<String>> records = new ArrayList<>();
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass()
+					.getResourceAsStream("/org/opengis/cite/ogcapitiles10/tilematrixsetdefinitions.csv")))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					String[] values = line.split(",");
+					records.add(Arrays.asList(values));
+				}
+			}
+
+			for (int i = 0; i < records.size(); i++) {
+
+				if (tileMatrixSetDefinitionURI.toLowerCase().equals(records.get(i).get(1).toLowerCase())) {
+					foundRegisteredTileMatrixSetDefinition = true;
+
+					tileMatrixSetDefinitionInUrlTemplate = urlTemplate.contains("/tiles/" + records.get(i).get(0))
+							|| urlTemplate.contains("/tiles/{tileMatrixSetId}");
+
+				}
+			}
+
+		}
+		catch (Exception ex) {
+
+			ex.printStackTrace();
+		}
 
 		TileResponseMetadata tileResponseMetadata = new TileResponseMetadata(false, -1);
 
