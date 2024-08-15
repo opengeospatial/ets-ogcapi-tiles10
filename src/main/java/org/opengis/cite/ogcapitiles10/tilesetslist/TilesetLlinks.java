@@ -4,6 +4,7 @@ import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.Method.GET;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.API_MODEL;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.IUT;
+import static org.opengis.cite.ogcapitiles10.SuiteAttribute.REQUIREMENTCLASSES;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opengis.cite.ogcapitiles10.CommonFixture;
+import org.opengis.cite.ogcapitiles10.conformance.RequirementClass;
 import org.opengis.cite.ogcapitiles10.openapi3.TestPoint;
 import org.testng.ITestContext;
 import org.testng.SkipException;
@@ -51,18 +53,30 @@ public class TilesetLlinks extends CommonFixture {
 	 */
 	@Test(description = "Implements Abstract test A.9, addresses Requirement 10 (/req/tilesets-list/tileset-links)",
 			groups = "tilesetsLists", dataProvider = "tilesetListsURIs")
-	public void validateTilesetsListResponse(TestPoint testPoint) {
+	public void validateTilesetsListResponse(ITestContext testContext, TestPoint testPoint) {
 
 		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);
 		}
-
+		Object requirementsClassesObject = testContext.getSuite().getAttribute(REQUIREMENTCLASSES.getName());
+		boolean implementsGeoDataTilesets = false;
+		if (requirementsClassesObject instanceof List<?>) {
+			List<?> requirementsClassesList = (List<?>) requirementsClassesObject;
+			if (!requirementsClassesList.contains(RequirementClass.TILESETS_LIST)) {
+				throw new SkipException(tilesets_lists_conformance_class_not_implemented);
+			}
+			if (requirementsClassesList.contains(RequirementClass.GEODATA_TILESETS)) {
+				implementsGeoDataTilesets = true;
+			}
+		}
 		StringBuffer errorMessagesRoot = new StringBuffer();
 		StringBuffer errorMessagesCollection = new StringBuffer();
 
 		errorMessagesRoot.append(tilesetsListResponseFromRoot());
 
-		errorMessagesCollection.append(tilesetsListResponseFromCollections());
+		if (implementsGeoDataTilesets) {
+			errorMessagesCollection.append(tilesetsListResponseFromCollections());
+		}
 
 		assertTrue(errorMessagesRoot.toString().length() == 0 && errorMessagesCollection.toString().length() == 0,
 				errorMessagesRoot.toString() + " \n" + errorMessagesCollection.toString());

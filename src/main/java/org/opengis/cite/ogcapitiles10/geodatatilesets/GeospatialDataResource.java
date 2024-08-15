@@ -3,6 +3,7 @@ package org.opengis.cite.ogcapitiles10.geodatatilesets;
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.Method.GET;
 import static org.opengis.cite.ogcapitiles10.EtsAssert.assertTrue;
+import static org.opengis.cite.ogcapitiles10.SuiteAttribute.REQUIREMENTCLASSES;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opengis.cite.ogcapitiles10.CommonFixture;
+import org.opengis.cite.ogcapitiles10.conformance.RequirementClass;
 import org.testng.Assert;
+import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
@@ -37,10 +40,18 @@ public class GeospatialDataResource extends CommonFixture {
 	 * </pre>
 	 */
 	@Test(description = "Implements Abstract test A.12, addresses Requirement 13", groups = "geodata")
-	public void geospatialResourceTilesetsLinksCheck() {
+	public void geospatialResourceTilesetsLinksCheck(ITestContext testContext) {
 
 		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);
+		}
+
+		Object requirementsClassesObject = testContext.getSuite().getAttribute(REQUIREMENTCLASSES.getName());
+		if (requirementsClassesObject instanceof List<?>) {
+			List<?> requirementsClassesList = (List<?>) requirementsClassesObject;
+			if (!requirementsClassesList.contains(RequirementClass.GEODATA_TILESETS)) {
+				throw new SkipException(geodata_tilesets_conformance_class_not_implemented);
+			}
 		}
 
 		Response request = init().baseUri(rootUri.toString()).accept(JSON).when().request(GET, "/collections");
@@ -64,8 +75,15 @@ public class GeospatialDataResource extends CommonFixture {
 	 * </pre>
 	 */
 	@Test(description = "Implements Abstract test A.13, addresses Requirement 14", groups = "geodata")
-	public void geospatialResourceTilesetsRetrieval() {
+	public void geospatialResourceTilesetsRetrieval(ITestContext testContext) {
 
+		Object requirementsClassesObject = testContext.getSuite().getAttribute(REQUIREMENTCLASSES.getName());
+		if (requirementsClassesObject instanceof List<?>) {
+			List<?> requirementsClassesList = (List<?>) requirementsClassesObject;
+			if (!requirementsClassesList.contains(RequirementClass.GEODATA_TILESETS)) {
+				throw new SkipException(geodata_tilesets_conformance_class_not_implemented);
+			}
+		}
 		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);
 		}
