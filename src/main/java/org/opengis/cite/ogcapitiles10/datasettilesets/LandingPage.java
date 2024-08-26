@@ -3,6 +3,7 @@ package org.opengis.cite.ogcapitiles10.datasettilesets;
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.Method.GET;
 import static org.opengis.cite.ogcapitiles10.EtsAssert.assertTrue;
+import static org.opengis.cite.ogcapitiles10.SuiteAttribute.REQUIREMENTCLASSES;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opengis.cite.ogcapitiles10.CommonFixture;
+import org.opengis.cite.ogcapitiles10.conformance.RequirementClass;
+import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
@@ -34,8 +37,15 @@ public class LandingPage extends CommonFixture {
 	 * </pre>
 	 */
 	@Test(description = "Implements Abstract test A.10, addresses Requirement 11", groups = "landingpage")
-	public void landingPageRetrieval() {
+	public void landingPageRetrieval(ITestContext testContext) {
 
+		Object requirementsClassesObject = testContext.getSuite().getAttribute(REQUIREMENTCLASSES.getName());
+		if (requirementsClassesObject instanceof List<?>) {
+			List<?> requirementsClassesList = (List<?>) requirementsClassesObject;
+			if (!requirementsClassesList.contains(RequirementClass.DATASET_TILES)) {
+				throw new SkipException(dataset_tilesets_conformance_class_not_implemented);
+			}
+		}
 		if (rootUri == null) {
 			throw new SkipException(missing_landing_page_error_message);
 		}
