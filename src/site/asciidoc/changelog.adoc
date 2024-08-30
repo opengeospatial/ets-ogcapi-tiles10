@@ -1,5 +1,11 @@
 = Release Notes OGC API - Tiles
 
+== 1.1 (2024-08-30)
+
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/13[Validation of requirement 10 from OGC API Tiles is not working properly]
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/28[Validation of requirement 10]
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/25[Improve support for Abstract test A.24 (operationID validation)]
+
 == 1.0 (2024-04-12)
 
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/pull/27[Set status of test suite to Final]
