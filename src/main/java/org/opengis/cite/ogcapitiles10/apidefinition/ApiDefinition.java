@@ -109,19 +109,18 @@ public class ApiDefinition extends CommonFixture {
 		boolean hasGetTileOperationId = false;
 
 		for (Map.Entry<String, Path> entry : map.entrySet()) {
-			if(entry.getValue().hasOperations()) {
-				if(entry.getValue().getGet()!=null) {
-					String operationId = ""+entry.getValue().getGet().getOperationId();
+			if (entry.getValue().hasOperations()) {
+				if (entry.getValue().getGet() != null) {
+					String operationId = "" + entry.getValue().getGet().getOperationId();
 					if (!operationId.trim().equals("null")) {
 						if (operationId.contains(".getTile")) {
 							hasGetTileOperationId = true;
 						}
-				  }
+					}
 				}
-			
 
 			}
-			
+
 		}
 
 		assertTrue(hasGetTileOperationId,
