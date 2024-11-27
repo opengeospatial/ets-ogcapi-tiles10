@@ -107,7 +107,7 @@ public class TilesetLlinks extends CommonFixture {
 					if (hasSubsetOfTheTilesetMetadata == false) { // Test Requirement
 																	// 10B
 						errorMessages
-								.append("One of the tilesets did not have the minimum required subset of metadata ;");
+							.append("One of the tilesets did not have the minimum required subset of metadata ;");
 					}
 
 				}
@@ -115,8 +115,8 @@ public class TilesetLlinks extends CommonFixture {
 				if (!link.get("href").toString().contains("/tiles")) { // Test
 																		// Requirement
 																		// 10A
-					errorMessages.append(
-							"'/tiles' path not found at link relation type " + link.get("href").toString() + " ;");
+					errorMessages
+						.append("'/tiles' path not found at link relation type " + link.get("href").toString() + " ;");
 				}
 			}
 

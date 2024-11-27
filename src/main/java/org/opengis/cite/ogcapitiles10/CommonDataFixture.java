@@ -31,7 +31,7 @@ public class CommonDataFixture extends CommonFixture {
 	@BeforeClass
 	public void requirementClasses(ITestContext testContext) {
 		this.requirementClasses = (List<RequirementClass>) testContext.getSuite()
-				.getAttribute(REQUIREMENTCLASSES.getName());
+			.getAttribute(REQUIREMENTCLASSES.getName());
 	}
 
 	@BeforeClass
