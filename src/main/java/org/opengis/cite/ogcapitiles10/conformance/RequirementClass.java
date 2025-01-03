@@ -9,10 +9,10 @@ package org.opengis.cite.ogcapitiles10.conformance;
  */
 public enum RequirementClass {
 
-	CORE("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core"), DATASET_TILES(
-			"http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/dataset-tilesets"), GEODATA_TILESETS(
-					"http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/geodata-tilesets"), TILESETS_LIST(
-							"http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list");
+	CORE("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/core"),
+	DATASET_TILES("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/dataset-tilesets"),
+	GEODATA_TILESETS("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/geodata-tilesets"),
+	TILESETS_LIST("http://www.opengis.net/spec/ogcapi-tiles-1/1.0/conf/tilesets-list");
 
 	private final String conformanceClass;
 

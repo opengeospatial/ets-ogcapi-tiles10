@@ -79,7 +79,8 @@ public class MandatoryCore extends CommonFixture {
 
 		String urlTemplate = testContext.getSuite().getAttribute(URL_TEMPLATE_FOR_TILES.getName()).toString();
 		String tileMatrixSetDefinitionURI = testContext.getSuite()
-				.getAttribute(TILE_MATRIX_SET_DEFINITION_URI.getName()).toString();
+			.getAttribute(TILE_MATRIX_SET_DEFINITION_URI.getName())
+			.toString();
 
 		String tileMatrixString = testContext.getSuite().getAttribute(TILE_MATRIX.getName()).toString();
 		String minTileRowString = testContext.getSuite().getAttribute(MINIMUM_TILE_ROW.getName()).toString();
@@ -100,7 +101,7 @@ public class MandatoryCore extends CommonFixture {
 
 			List<List<String>> records = new ArrayList<>();
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass()
-					.getResourceAsStream("/org/opengis/cite/ogcapitiles10/tilematrixsetdefinitions.csv")))) {
+				.getResourceAsStream("/org/opengis/cite/ogcapitiles10/tilematrixsetdefinitions.csv")))) {
 				String line;
 				while ((line = br.readLine()) != null) {
 					String[] values = line.split(",");
@@ -147,7 +148,8 @@ public class MandatoryCore extends CommonFixture {
 
 		String urlTemplate = testContext.getSuite().getAttribute(URL_TEMPLATE_FOR_TILES.getName()).toString();
 		String tileMatrixSetDefinitionURI = testContext.getSuite()
-				.getAttribute(TILE_MATRIX_SET_DEFINITION_URI.getName()).toString();
+			.getAttribute(TILE_MATRIX_SET_DEFINITION_URI.getName())
+			.toString();
 
 		String tileMatrixString = testContext.getSuite().getAttribute(TILE_MATRIX.getName()).toString();
 		String minTileRowString = testContext.getSuite().getAttribute(MINIMUM_TILE_ROW.getName()).toString();
@@ -168,7 +170,7 @@ public class MandatoryCore extends CommonFixture {
 
 			List<List<String>> records = new ArrayList<>();
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(this.getClass()
-					.getResourceAsStream("/org/opengis/cite/ogcapitiles10/tilematrixsetdefinitions.csv")))) {
+				.getResourceAsStream("/org/opengis/cite/ogcapitiles10/tilematrixsetdefinitions.csv")))) {
 				String line;
 				while ((line = br.readLine()) != null) {
 					String[] values = line.split(",");
@@ -222,8 +224,9 @@ public class MandatoryCore extends CommonFixture {
 
 			for (int c = minTileCol; c <= maxTileCol; c++) {
 
-				urlString = urlTemplate.replace("{tileMatrix}", tileMatrix + "").replace("{tileRow}", r + "")
-						.replace("{tileCol}", c + "");
+				urlString = urlTemplate.replace("{tileMatrix}", tileMatrix + "")
+					.replace("{tileRow}", r + "")
+					.replace("{tileCol}", c + "");
 
 				URL urlStr = new URL(urlString);
 				HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
@@ -287,9 +290,9 @@ public class MandatoryCore extends CommonFixture {
 		int minTileRow = Integer.parseInt(testContext.getSuite().getAttribute(MINIMUM_TILE_ROW.getName()).toString());
 		int maxTileRow = Integer.parseInt(testContext.getSuite().getAttribute(MAXIMUM_TILE_ROW.getName()).toString());
 		int minTileCol = Integer
-				.parseInt(testContext.getSuite().getAttribute(MINIMUM_TILE_COLUMN.getName()).toString());
+			.parseInt(testContext.getSuite().getAttribute(MINIMUM_TILE_COLUMN.getName()).toString());
 		int maxTileCol = Integer
-				.parseInt(testContext.getSuite().getAttribute(MAXIMUM_TILE_COLUMN.getName()).toString());
+			.parseInt(testContext.getSuite().getAttribute(MAXIMUM_TILE_COLUMN.getName()).toString());
 
 		boolean allRequestsSuccessful = true;
 
@@ -298,8 +301,9 @@ public class MandatoryCore extends CommonFixture {
 		int invalidTileRow = Integer.MAX_VALUE;
 		int invalidTileCol = Integer.MAX_VALUE;
 
-		urlString = urlTemplate.replace("{tileMatrix}", tileMatrix + "").replace("{tileRow}", invalidTileRow + "")
-				.replace("{tileCol}", invalidTileCol + "");
+		urlString = urlTemplate.replace("{tileMatrix}", tileMatrix + "")
+			.replace("{tileRow}", invalidTileRow + "")
+			.replace("{tileCol}", invalidTileCol + "");
 
 		URL urlStr = new URL(urlString);
 		HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
