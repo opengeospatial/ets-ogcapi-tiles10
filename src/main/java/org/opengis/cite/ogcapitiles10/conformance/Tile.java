@@ -557,9 +557,9 @@ public class Tile extends CommonFixture {
 
 								int responseCode = httpConn.getResponseCode();
 
-								if (responseCode != 200) {
+								if (responseCode != 200 && responseCode != 204) {
 									errorMessages
-										.append("Expected status code 200 but received " + responseCode + " . ");
+										.append("Expected status code 200 or 204 but received " + responseCode + " . ");
 								}
 							}
 							else if (checkErrorResponse == true) {
