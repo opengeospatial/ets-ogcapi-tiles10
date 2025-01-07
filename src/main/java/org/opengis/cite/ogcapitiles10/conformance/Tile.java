@@ -270,8 +270,10 @@ public class Tile extends CommonFixture {
 									String newURL2 = formatLinkURI(rootUri.getScheme(), rootUri.getHost(),
 											tilesetLink.get("href").toString());
 
-									Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when()
-											.request(GET);
+									Response innerTilesRequest = init().baseUri(newURL2)
+										.accept(JSON)
+										.when()
+										.request(GET);
 									innerTilesRequest.then().statusCode(200);
 									JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
 									List<Object> innerTilesLinks = innerTilesResponse.getList("links");
@@ -337,16 +339,19 @@ public class Tile extends CommonFixture {
 									String newURL2 = formatLinkURI(rootUri.getScheme(), rootUri.getHost(),
 											tilesetLink.get("href").toString());
 
-									Response innerTilesRequest = init().baseUri(newURL2).accept(JSON).when()
-											.request(GET);
+									Response innerTilesRequest = init().baseUri(newURL2)
+										.accept(JSON)
+										.when()
+										.request(GET);
 									innerTilesRequest.then().statusCode(200);
 									JsonPath innerTilesResponse = innerTilesRequest.jsonPath();
 									List<Object> innerTilesLinks = innerTilesResponse.getList("links");
 
 									for (int x = 0; x < innerTilesLinks.size(); x++) {
 										HashMap innerTileLink = (HashMap) innerTilesLinks.get(x);
-										if (innerTileLink.get("href").toString()
-												.contains("{" + definitionTemplate + "}")) {
+										if (innerTileLink.get("href")
+											.toString()
+											.contains("{" + definitionTemplate + "}")) {
 											foundTemplates = true;
 										}
 
@@ -541,10 +546,11 @@ public class Tile extends CommonFixture {
 						if (testURL) {
 
 							if (checkErrorResponse == false) {
-								String newURL = links.get("href").toString()
-										.replace("{" + this.tileMatrixTemplateString + "}", tileMatrix)
-										.replace("{" + this.tileRowTemplateString + "}", maxTileRow)
-										.replace("{" + this.tileColTemplateString + "}", minTileCol);
+								String newURL = links.get("href")
+									.toString()
+									.replace("{" + this.tileMatrixTemplateString + "}", tileMatrix)
+									.replace("{" + this.tileRowTemplateString + "}", maxTileRow)
+									.replace("{" + this.tileColTemplateString + "}", minTileCol);
 
 								URL urlStr = new URL(newURL);
 								HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
@@ -553,15 +559,16 @@ public class Tile extends CommonFixture {
 
 								if (responseCode != 200 && responseCode != 204) {
 									errorMessages
-											.append("Expected status code 200 or 204 but received " + responseCode + " . ");
+										.append("Expected status code 200 or 204 but received " + responseCode + " . ");
 								}
 							}
 							else if (checkErrorResponse == true) {
-								String newURL = links.get("href").toString()
-										.replace("{" + this.tileMatrixTemplateString + "}", tileMatrix)
-										.replace("{" + this.tileRowTemplateString + "}",
-												"" + (Integer.parseInt(maxTileRow) + 1))
-										.replace("{" + this.tileColTemplateString + "}", minTileCol);
+								String newURL = links.get("href")
+									.toString()
+									.replace("{" + this.tileMatrixTemplateString + "}", tileMatrix)
+									.replace("{" + this.tileRowTemplateString + "}",
+											"" + (Integer.parseInt(maxTileRow) + 1))
+									.replace("{" + this.tileColTemplateString + "}", minTileCol);
 
 								URL urlStr = new URL(newURL);
 								HttpURLConnection httpConn = (HttpURLConnection) urlStr.openConnection();
@@ -569,8 +576,8 @@ public class Tile extends CommonFixture {
 								int responseCode = httpConn.getResponseCode();
 
 								if (responseCode != 404 && responseCode != 400) {
-									errorMessages.append(
-											"Expected status code 404 or 400 but received " + responseCode + " . ");
+									errorMessages
+										.append("Expected status code 404 or 400 but received " + responseCode + " . ");
 								}
 
 							}

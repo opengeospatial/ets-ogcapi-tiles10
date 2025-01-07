@@ -1,4 +1,5 @@
-FROM tomcat:7.0-jre8
+FROM tomcat:10-jre17
+RUN apt update && apt install -y unzip
 
 MAINTAINER Dirk Stenger <stenger@lat-lon.de>
 MAINTAINER Torsten Friebe <friebe@lat-lon.de>
@@ -23,6 +24,8 @@ ADD maven/ets-ogcapi-tiles10-*-ctl.zip /root/
 RUN cd /root/ && unzip -q ets-ogcapi-tiles10-*-ctl.zip -d /root/te_base/scripts
 ADD maven/ets-ogcapi-tiles10-*-deps.zip /root/
 RUN cd /root/ && unzip -q -o ets-ogcapi-tiles10-*-deps.zip -d /usr/local/tomcat/webapps/teamengine/WEB-INF/lib
+
+RUN rm -R /root/te_base/scripts/note
 
 # run tomcat
 CMD ["catalina.sh", "jpda", "run"]
