@@ -1,5 +1,10 @@
 = Release Notes OGC API - Tiles
 
+== 1.2 (2025-01-07)
+
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/34[Migrate test suite to TEAM Engine 6 (Java 17)]
+- https://github.com/opengeospatial/ets-ogcapi-tiles10/pull/36[Allow HTTP 204 on tile within tileMatrixSet limits]
+
 == 1.1 (2024-08-30)
 
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/13[Validation of requirement 10 from OGC API Tiles is not working properly]
