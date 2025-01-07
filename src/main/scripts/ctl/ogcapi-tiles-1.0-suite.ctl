@@ -12,7 +12,7 @@
     <ctl:return>The test results as a Source object (root node).</ctl:return>
     <ctl:description>Runs the OGC API - Tiles (${version}) test suite.</ctl:description>
     <ctl:code>
-      <xsl:variable name="controller" select="tng:new($outputDir)" />
+      <xsl:variable name="controller" select="tng:new($outputDir, boolean('false'))" />
       <xsl:copy-of select="tng:doTestRun($controller, $testRunArgs)" />
     </ctl:code>
   </ctl:function>
