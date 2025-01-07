@@ -35,7 +35,7 @@ public class CommandLineArguments {
 			description = "Delete file containing representation of test subject when finished")
 	private boolean deleteSubjectOnFinish = false;
 
-	@Parameter(names = {"-h", "--generateHtmlReport"}, arity = 1, description = "Enable HTML report generation")
+	@Parameter(names = { "-h", "--generateHtmlReport" }, arity = 1, description = "Enable HTML report generation")
 	private boolean generateHtmlReport = false;
 
 	public CommandLineArguments() {
@@ -65,4 +65,5 @@ public class CommandLineArguments {
 	public boolean isGenerateHtmlReport() {
 		return generateHtmlReport;
 	}
+
 }

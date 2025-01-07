@@ -73,7 +73,8 @@ public class TestNGController implements TestSuiteController {
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		File xmlArgs = testRunArgs.getPropertiesFile();
 		Document testRunProps = db.parse(xmlArgs);
-		TestNGController controller = new TestNGController(testRunArgs.getOutputDir(), testRunArgs.isGenerateHtmlReport());
+		TestNGController controller = new TestNGController(testRunArgs.getOutputDir(),
+				testRunArgs.isGenerateHtmlReport());
 		Source testResults = controller.doTestRun(testRunProps);
 		System.out.println("Test results: " + testResults.getSystemId());
 	}
@@ -88,13 +89,10 @@ public class TestNGController implements TestSuiteController {
 
 	/**
 	 * Construct a controller that writes results to the given output directory.
-	 *
-	 * @param outputDir
-	 *            The location of the directory in which test results will be
-	 *            written (a file system path or a 'file' URI). It will be
-	 *            created if it does not exist.
-	 * @param generateHtmlReport
-	 *            Enable HTML report generation.
+	 * @param outputDir The location of the directory in which test results will be
+	 * written (a file system path or a 'file' URI). It will be created if it does not
+	 * exist.
+	 * @param generateHtmlReport Enable HTML report generation.
 	 */
 	public TestNGController(String outputDir, boolean generateHtmlReport) {
 		InputStream is = getClass().getResourceAsStream("ets.properties");
