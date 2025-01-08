@@ -2,6 +2,8 @@
 
 == 1.2 (2025-01-07)
 
+Attention: Java 17 and Tomcat 10.1 are required.
+
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/34[Migrate test suite to TEAM Engine 6 (Java 17)]
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/pull/36[Allow HTTP 204 on tile within tileMatrixSet limits]
 - https://github.com/opengeospatial/ets-ogcapi-tiles10/pull/33[Introduce "generateHtmlReport" flag to allow user to get HTML output]
