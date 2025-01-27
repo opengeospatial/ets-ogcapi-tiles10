@@ -7,7 +7,7 @@
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
-    <version>1.5</version>
+    <version>2.0.1</version>
   </skin>
   <custom>
     <fluidoSkin>
@@ -23,7 +23,7 @@
 
   <body>
     <links>
-      <item name="Issues" href="https://github.com/opengeospatial/ets-ogcapi-features10/issues"/>
+      <item name="Issues" href="https://github.com/opengeospatial/ets-ogcapi-tiles10/issues"/>
     </links>
 
     <menu name="Getting Started">
