@@ -119,6 +119,7 @@ public class ApiDefinition extends CommonFixture {
 				if (entry.getValue().getGet() != null) {
 					String operationId = "" + entry.getValue().getGet().getOperationId();
 					if (!operationId.trim().equals("null")) {
+						// https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/31
 						if (operationId.contains(".getTile") || operationId.contains(".getTileSetsList")
 								|| operationId.contains(".getTileSet")) {
 							hasAdequateOperationId = true;
