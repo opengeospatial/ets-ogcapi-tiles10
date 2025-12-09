@@ -1,27 +1,31 @@
 package org.opengis.cite.ogcapitiles10.apidefinition;
 
-import com.reprezen.kaizen.oasparser.OpenApi3Parser;
-import com.reprezen.kaizen.oasparser.model3.OpenApi3;
-import com.reprezen.kaizen.oasparser.model3.Path;
-import com.reprezen.kaizen.oasparser.val.ValidationResults;
-import io.restassured.path.json.JsonPath;
-import io.restassured.response.Response;
-import org.opengis.cite.ogcapitiles10.CommonFixture;
-import org.testng.ITestContext;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.Method.GET;
 import static org.opengis.cite.ogcapitiles10.EtsAssert.assertTrue;
 import static org.opengis.cite.ogcapitiles10.OgcApiTiles10.OPEN_API_MIME_TYPE;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.API_MODEL;
 import static org.opengis.cite.ogcapitiles10.util.JsonUtils.parseAsListOfMaps;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Map;
+
+import org.opengis.cite.ogcapitiles10.CommonFixture;
+import org.testng.ITestContext;
+import org.testng.SkipException;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.reprezen.kaizen.oasparser.OpenApi3Parser;
+import com.reprezen.kaizen.oasparser.model3.OpenApi3;
+import com.reprezen.kaizen.oasparser.model3.Path;
+import com.reprezen.kaizen.oasparser.val.ValidationResults;
+
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
 
 /**
  * A.2.3. API Definition Path {root}/api (link)
@@ -87,14 +91,16 @@ public class ApiDefinition extends CommonFixture {
 	}
 
 	/**
-	 * Implements Abstract test A.24: /conf/oas30/operation-id Partly addresses
-	 * Requirement 23: /req/oas30/operation-id
+	 * Implements Abstract test A.24: /conf/oas30/operation-id Requirement 23:
+	 * /req/oas30/operation-id
 	 * @param testContext never <code>null</code>
 	 * @throws MalformedURLException if the apiUrl is malformed
+	 * @throws URISyntaxException
 	 */
 	@Test(description = "Implements Abstract test A.24, Requirement 23: /req/oas30/operation-id",
 			groups = "apidefinition")
-	public void apiDefinitionOperationIdValidation(ITestContext testContext) throws MalformedURLException {
+	public void apiDefinitionOperationIdValidation(ITestContext testContext)
+			throws MalformedURLException, URISyntaxException {
 
 		OpenApi3Parser parser = new OpenApi3Parser();
 
@@ -102,19 +108,22 @@ public class ApiDefinition extends CommonFixture {
 			throw new SkipException(missing_api_definition_error_message);
 		}
 
-		OpenApi3 apiModel = parser.parse(response, new URL(apiUrl), true);
+		OpenApi3 apiModel = parser.parse(response, new URI(apiUrl).toURL(), true);
 
 		Map<String, Path> map = apiModel.getPaths();
 
-		boolean hasGetTileOperationId = false;
+		boolean hasAdequateOperationId = false;
 
 		for (Map.Entry<String, Path> entry : map.entrySet()) {
 			if (entry.getValue().hasOperations()) {
 				if (entry.getValue().getGet() != null) {
 					String operationId = "" + entry.getValue().getGet().getOperationId();
 					if (!operationId.trim().equals("null")) {
-						if (operationId.contains(".getTile")) {
-							hasGetTileOperationId = true;
+						if (operationId.contains(".getTile") || operationId.contains(".getTileSetsList")
+								|| operationId.contains(".getTileSet")) {
+							hasAdequateOperationId = true;
+							// no need to continue
+							break;
 						}
 					}
 				}
@@ -123,7 +132,7 @@ public class ApiDefinition extends CommonFixture {
 
 		}
 
-		assertTrue(hasGetTileOperationId,
+		assertTrue(hasAdequateOperationId,
 				"None of the operationIDs matched those specified by Requirement /req/oas30/operation-id and Table 11");
 
 	}
