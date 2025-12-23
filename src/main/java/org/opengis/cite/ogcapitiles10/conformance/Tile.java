@@ -2,12 +2,14 @@ package org.opengis.cite.ogcapitiles10.conformance;
 
 import static io.restassured.http.ContentType.JSON;
 import static io.restassured.http.Method.GET;
+import static org.opengis.cite.ogcapitiles10.EtsAssert.assertTrue;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.MAXIMUM_TILE_COLUMN;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.MAXIMUM_TILE_ROW;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.MINIMUM_TILE_COLUMN;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.MINIMUM_TILE_ROW;
 import static org.opengis.cite.ogcapitiles10.SuiteAttribute.TILE_MATRIX;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -17,23 +19,29 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.cite.ogcapitiles10.CommonFixture;
 import org.opengis.cite.ogcapitiles10.util.TestSuiteLogger;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import no.ecc.vectortile.VectorTileDecoder;
+import no.ecc.vectortile.VectorTileDecoder.Feature;
+import no.ecc.vectortile.VectorTileDecoder.FeatureIterable;
 
 /**
  * Updated at the OGC API - Tiles Sprint 2020 by ghobona
@@ -559,7 +567,29 @@ public class Tile extends CommonFixture {
 									}
 
 									// https://github.com/opengeospatial/ets-ogcapi-tiles10/issues/32
-									// check response
+									// check response for mapbox vector tiles in
+									// webmercator format
+									if (newURL.toLowerCase().contains("webmercatorquad")
+											&& newURL.toLowerCase().contains("mvt")) {
+										double maxTileRowDouble = Double.valueOf(maxTileRow);
+										double minTileColDouble = Double.valueOf(minTileCol);
+										double tileMatrixDouble = Double.valueOf(tileMatrix);
+
+										Coordinate topleft = webMercatorPixel2deg(maxTileRowDouble, minTileColDouble,
+												tileMatrixDouble, 0, 0);
+										Coordinate bottomRight = webMercatorPixel2deg(maxTileRowDouble,
+												minTileColDouble, tileMatrixDouble, 4096, 4096);
+
+										Envelope bbox = new Envelope(topleft, bottomRight);
+
+										VectorTileDecoder decoder = new VectorTileDecoder();
+
+										FeatureIterable features = decoder.decode(toBytes((httpConn.getInputStream())));
+										if (features != null) {
+											features.forEach(f -> checkFeature(f, bbox, tileMatrixDouble,
+													tileMatrixDouble, tileMatrixDouble));
+										}
+									}
 								}
 								else if (checkErrorResponse == true) {
 									String newURL = link.get("href")
@@ -691,6 +721,65 @@ public class Tile extends CommonFixture {
 		}
 
 		return tileSetMetadata;
+	}
+
+	private static Coordinate webMercatorPixel2deg(double xtile, double ytile, double zoom, double xpixel,
+			double ypixel) {
+		double extent = 4096;
+		double n = Math.pow(2.0, zoom);
+		xtile = xtile + (xpixel / extent);
+		ytile = ytile + ((extent - ypixel) / extent);
+		double lon_deg = (xtile / n) * 360.0 - 180.0;
+		double lat_rad = Math.atan(Math.sinh(Math.PI * (1 - 2 * ytile / n)));
+		double lat_deg = Math.toDegrees(lat_rad);
+		return new Coordinate(lon_deg, lat_deg);
+	}
+
+	private static byte[] toBytes(InputStream in) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buf = new byte[8192];
+		int bytesRead = 0;
+		while ((bytesRead = in.read(buf)) != -1) {
+			baos.write(buf, 0, bytesRead);
+		}
+		return baos.toByteArray();
+	}
+
+	private static Object checkFeature(Feature f, Envelope bbox, double maxTileRowDouble, double minTileColDouble,
+			double tileMatrixDouble) {
+		if (f.getGeometry() != null) {
+			if (f.getGeometry() instanceof Point) {
+				try {
+					Point p = (Point) f.getGeometry();
+					Coordinate c1 = webMercatorPixel2deg(maxTileRowDouble, minTileColDouble, tileMatrixDouble, p.getX(),
+							p.getY());
+					assertTrue(bbox.contains(c1), "Coordinate outside tiles extent.");
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else if (f.getGeometry() instanceof Polygon) {
+				Polygon p = (Polygon) f.getGeometry();
+				Coordinate[] coordinates = p.getCoordinates();
+				for (Coordinate coordinate : coordinates) {
+					Coordinate c1 = webMercatorPixel2deg(maxTileRowDouble, minTileColDouble, tileMatrixDouble,
+							coordinate.getX(), coordinate.getY());
+					assertTrue(bbox.contains(c1), "Coordinate" + c1 + " outside tiles extent: " + bbox);
+				}
+			}
+		}
+		else if (f.getGeometry() instanceof LineString) {
+			LineString l = (LineString) f.getGeometry();
+			Coordinate[] coordinates = l.getCoordinates();
+			for (Coordinate coordinate : coordinates) {
+				Coordinate c1 = webMercatorPixel2deg(maxTileRowDouble, minTileColDouble, tileMatrixDouble,
+						coordinate.getX(), coordinate.getY());
+				assertTrue(bbox.contains(c1), "Coordinate" + c1 + " outside tiles extent: " + bbox);
+			}
+
+		}
+		return null;
 	}
 
 	public String readJSONObjectFromURL(URL requestURL) throws IOException {
